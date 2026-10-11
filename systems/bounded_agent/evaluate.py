@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
-from common.evaluation import mean
+def mean(values) -> float:
+    values = list(values)
+    return sum(values) / len(values) if values else 0.0
 from systems.bounded_agent.app import BoundedAgent
 
 def evaluate():

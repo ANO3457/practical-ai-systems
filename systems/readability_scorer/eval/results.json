@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "cases": 4,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "band_accuracy": 1.0
+  },
+  "notes": "vowel-run syllable heuristic; a rough proxy, not a validated readability model",
+  "system": "readability_scorer"
+}

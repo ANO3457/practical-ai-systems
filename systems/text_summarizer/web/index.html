@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Extractive Text Summarizer</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; line-height: 1.5; }
+  textarea, input, select { width: 100%; font: inherit; padding: 0.5rem; box-sizing: border-box; margin-top: 0.25rem; }
+  label { font-weight: 600; font-size: 0.9rem; display: block; margin-top: 1rem; }
+  button { padding: 0.5rem 1.25rem; margin-top: 0.75rem; margin-right: 0.5rem; cursor: pointer; border: 1px solid #333; background: #1a1a1a; color: white; border-radius: 4px; }
+  button.secondary { background: white; color: #1a1a1a; }
+  pre { background: #f4f4f4; padding: 1rem; overflow-x: auto; white-space: pre-wrap; border-radius: 4px; min-height: 1.5rem; }
+  .limits { font-size: 0.9rem; color: #555; border-top: 1px solid #ddd; margin-top: 2rem; padding-top: 1rem; }
+  code { background: #eee; padding: 0.1rem 0.3rem; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <h1>Extractive Text Summarizer</h1>
+  <p>Pick the most representative sentences from a short document using word-frequency scoring. No model, no API key -- everything runs in your browser.</p>
+
+  <label for="text">Text</label>
+  <textarea id="text" rows="6">Database indexing speeds up queries. Indexing indexing indexing is crucial for performance. The weather was nice yesterday.</textarea>
+
+  <label for="n">Number of sentences</label>
+  <input id="n" type="number" min="1" value="1" />
+
+  <button id="run">Summarize</button>
+  <pre id="output"></pre>
+
+  <button id="run-eval" class="secondary">Run evaluation (5 synthetic fixtures)</button>
+  <pre id="eval-output"></pre>
+
+  <div class="limits">
+    <strong>Known limitations:</strong> scoring is a plain term-frequency average with no notion of meaning, coreference, or discourse structure. See the project
+    <a href="../README.md">README</a> for the full write-up and the Python CLI version.
+  </div>
+
+  <script type="module" src="./dist/main.js"></script>
+</body>
+</html>

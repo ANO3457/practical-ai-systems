@@ -1,0 +1,13 @@
+{
+  "dataset": {
+    "cases": 5,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "avg_compression_ratio": 0.4242,
+    "key_sentence_recall": 1.0
+  },
+  "notes": "word-frequency extractive baseline on synthetic text; no model used",
+  "system": "text_summarizer"
+}

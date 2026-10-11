@@ -1,0 +1,1 @@
+{"name":"bounded-agent-web","private":true,"type":"module","scripts":{"build":"tsc","start":"npm run build && node serve.mjs","test":"npm run build && node --test dist/app.test.js"},"devDependencies":{"typescript":"^5.6.3","@types/node":"^22.10.0"}}

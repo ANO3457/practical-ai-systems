@@ -5,7 +5,18 @@ agreement mechanics, not the quality of any hosted LLM-as-judge system.
 """
 from __future__ import annotations
 import re
-from common.evaluation import cohen_kappa
+from collections import Counter
+
+
+def cohen_kappa(a: list, b: list) -> float:
+    """Agreement between two raters beyond chance."""
+    if len(a) != len(b) or not a:
+        raise ValueError("raters must label the same non-empty set")
+    n = len(a)
+    observed = sum(x == y for x, y in zip(a, b)) / n
+    ca, cb = Counter(a), Counter(b)
+    expected = sum(ca[label] * cb[label] for label in ca) / (n * n)
+    return 1.0 if expected == 1 else (observed - expected) / (1 - expected)
 
 
 def judge(claim: str, evidence: str) -> str:

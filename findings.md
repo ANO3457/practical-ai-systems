@@ -6,7 +6,7 @@ Build original AI-system examples that are runnable and evaluated. Each project 
 
 ## Current baseline
 
-- 10 runnable prototypes in `systems/`.
+- 30 runnable prototypes in `systems/` (10 Beginner, 10 Intermediate, 10 Advanced).
 - 20 external projects in a separate structured toolbox spanning six categories.
 - Shared offline helpers for retrieval, metrics, and optional model providers.
 - CI validates generated views, tests, evaluation packets, and examples.

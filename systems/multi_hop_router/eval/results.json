@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "cases": 3,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "abstention_accuracy": 1.0
+  },
+  "notes": "heuristic sentence/connector split over this project's own bundled synthetic documents",
+  "system": "multi_hop_router"
+}

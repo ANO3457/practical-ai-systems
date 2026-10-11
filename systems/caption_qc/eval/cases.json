@@ -1,0 +1,27 @@
+[
+  {
+    "caption": "A golden retriever running across a sunny beach.",
+    "required_keywords": ["retriever", "beach"],
+    "gold_pass": true
+  },
+  {
+    "caption": "image of a cat.",
+    "required_keywords": [],
+    "gold_pass": false
+  },
+  {
+    "caption": "Red car.",
+    "required_keywords": ["car"],
+    "gold_pass": false
+  },
+  {
+    "caption": "one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twentyone twentytwo twentythree twentyfour twentyfive twentysix",
+    "required_keywords": [],
+    "gold_pass": false
+  },
+  {
+    "caption": "No caption available for this slide.",
+    "required_keywords": [],
+    "gold_pass": false
+  }
+]

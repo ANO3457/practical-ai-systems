@@ -1,0 +1,10 @@
+{
+  "baseline": [95, 100, 105, 98, 102, 97, 103, 99, 101, 100],
+  "traces": [
+    {"name": "normal1", "duration_ms": 101, "error": false},
+    {"name": "spike", "duration_ms": 500, "error": false},
+    {"name": "error_but_fast", "duration_ms": 100, "error": true},
+    {"name": "slightly_high", "duration_ms": 106, "error": false}
+  ],
+  "gold_anomalous": [false, true, true, false]
+}

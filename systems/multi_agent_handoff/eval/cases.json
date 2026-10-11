@@ -1,0 +1,6 @@
+[
+  {"text": "There is a refund issue with my invoice payment.", "gold_status": "resolved"},
+  {"text": "My password login keeps showing an error and the app crashes.", "gold_status": "resolved"},
+  {"text": "Can you tell me about your company history?", "gold_status": "escalated"},
+  {"text": "There was an error.", "gold_status": "escalated"}
+]

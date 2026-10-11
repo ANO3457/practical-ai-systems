@@ -1,0 +1,36 @@
+[
+  {
+    "schema": {
+      "id": {"type": "number", "required": true},
+      "name": {"type": "string", "required": true}
+    },
+    "records": [
+      {"id": 1, "name": "A"},
+      {"id": 2, "name": "B", "email": "b@x.com"},
+      {"name": "C"},
+      {"id": "4", "name": "D"}
+    ],
+    "gold": {
+      "new_fields": ["email"],
+      "missing_required_fields": ["id"],
+      "type_mismatched_fields": ["id"],
+      "drift_detected": true
+    }
+  },
+  {
+    "schema": {
+      "id": {"type": "number", "required": true},
+      "name": {"type": "string", "required": true}
+    },
+    "records": [
+      {"id": 1, "name": "A"},
+      {"id": 2, "name": "B"}
+    ],
+    "gold": {
+      "new_fields": [],
+      "missing_required_fields": [],
+      "type_mismatched_fields": [],
+      "drift_detected": false
+    }
+  }
+]

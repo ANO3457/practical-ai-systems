@@ -9,6 +9,11 @@ __pycache__/
 .venv/
 venv/
 
+# Node / TypeScript web apps (each systems/<name>/web/ is standalone)
+node_modules/
+dist/
+package-lock.json
+
 # Secrets and local environment
 .env
 .env.*

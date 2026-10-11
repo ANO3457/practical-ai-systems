@@ -1,6 +1,10 @@
 """Find names, dates, and amounts in business text using explicit patterns."""
 import re
-from common.evaluation import prf
+def prf(tp: int, fp: int, fn: int) -> dict:
+    precision = tp / (tp + fp) if tp + fp else 0.0
+    recall = tp / (tp + fn) if tp + fn else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return {"precision": precision, "recall": recall, "f1": f1}
 
 PATTERNS = {
     "PERSON": re.compile(r"\b[A-Z][a-z]+\s+[A-Z][a-z]+\b"),

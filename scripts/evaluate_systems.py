@@ -12,8 +12,17 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 SYSTEMS = (
-    "doc_qa", "invoice_extract", "entity_extraction", "voice_eval", "multimodal_ocr",
-    "bounded_agent", "mcp_kb", "judge_audit", "semantic_cache", "repo_guard",
+    # Beginner
+    "doc_qa", "invoice_extract", "repo_guard", "text_summarizer", "dedupe_questions",
+    "pii_redactor", "sentiment_lexicon", "readability_scorer", "faq_router", "csv_schema_validator",
+    # Intermediate
+    "multimodal_ocr", "entity_extraction", "semantic_cache", "query_rewriter",
+    "prompt_injection_detector", "cost_latency_tracker", "table_extractor",
+    "caption_qc", "citation_checker", "schema_drift_detector",
+    # Advanced
+    "voice_eval", "judge_audit", "bounded_agent", "mcp_kb", "multi_agent_handoff",
+    "retrieval_eval_harness", "canary_rollout_simulator", "redteam_harness",
+    "trace_anomaly_detector", "multi_hop_router",
 )
 COUNT_FIELDS = ("cases", "calls", "documents", "entries")
 

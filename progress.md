@@ -17,3 +17,11 @@
 - Diagnosed and fixed duplicate `run:` keys in the GitHub Actions workflow; the subsequent Actions run passed.
 - Reworked README onboarding around Beginner / Intermediate / Advanced levels and kept project-level caveats visible.
 - Reframed the public product description around this repository's own runnable-system concept.
+
+## 2026-10-11 — Grew to 10 systems per level
+- Added 20 new offline-first systems (7 Beginner, 7 Intermediate, 6 Advanced) to reach 10 per level / 30 total, each with its own code, synthetic eval fixtures, focused tests, and README.
+- New Beginner: extractive summarizer, near-duplicate question detector, PII redactor, lexicon sentiment classifier, readability scorer, FAQ intent router, CSV schema validator.
+- New Intermediate: synonym query rewriter, prompt-injection scanner, cost/latency guardrail tracker, post-OCR table extractor, caption QC, RAG citation checker, schema drift detector.
+- New Advanced: multi-agent triage handoff, retrieval evaluation harness (recall@k/MRR/nDCG), canary rollout simulator, adversarial red-team harness against the bounded agent, trace anomaly detector, multi-hop reasoning router.
+- Registered every new system in `scripts/evaluate_systems.py` and `scripts/render_systems.py`; regenerated `eval/results.json` for all 30 systems and the README's experience-level index.
+- Full suite green: 104 systems-level tests, 33 top-level tests (catalog/paths/systems), 4 example tests, `build_catalog.py`, `render_systems.py`, and `evaluate_systems.py --check` all pass with no stale generated views.

@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "cases": 6,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "routing_accuracy": 1.0
+  },
+  "notes": "fixed keyword-overlap router over five intents plus an unknown fallback",
+  "system": "faq_router"
+}

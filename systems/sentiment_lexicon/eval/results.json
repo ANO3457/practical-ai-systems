@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "cases": 5,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "accuracy": 1.0
+  },
+  "notes": "small hand-built lexicon; exact word match only, no stemming or negation handling",
+  "system": "sentiment_lexicon"
+}

@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://github.com/shivamnegi92/practical-ai-systems/actions/workflows/catalog.yml"><img src="https://github.com/shivamnegi92/practical-ai-systems/actions/workflows/catalog.yml/badge.svg" alt="Build and validation" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/content-CC0%201.0-lightgrey.svg" alt="CC0 1.0" /></a>
-  <a href="systems/"><img src="https://img.shields.io/badge/runnable%20systems-10-2f6fdb.svg" alt="10 runnable systems" /></a>
+  <a href="systems/"><img src="https://img.shields.io/badge/runnable%20systems-30-2f6fdb.svg" alt="30 runnable systems" /></a>
 </p>
 
 ## Pick your starting point
@@ -64,9 +64,9 @@ python3 -m unittest systems.doc_qa.test_doc_qa -v
 
 Choose a level that feels right. You can skip ahead if you already know the basics.
 
-- **[Beginner](#beginner)** — 3 first projects; no model setup.
-- **[Intermediate](#intermediate)** — 3 projects; Python and basic metrics help.
-- **[Advanced](#advanced)** — 4 projects; system boundaries and evaluation.
+- **[Beginner](#beginner)** — 10 first projects; no model setup.
+- **[Intermediate](#intermediate)** — 10 projects; Python and basic metrics help.
+- **[Advanced](#advanced)** — 10 projects; system boundaries and evaluation.
 
 ### Beginner
 
@@ -99,6 +99,69 @@ Run simple local checks and see why toy patterns miss real risks.
 **Try this:** run the project README quickstart, then its test and evaluator.
 [Evaluation results and cases](systems/repo_guard/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
 
+#### [Extractive text summarizer](systems/text_summarizer/README.md)
+
+Pick the most representative sentences from a short document using word-frequency scoring.
+
+**Before you start:** Terminal basics; Python is optional to run it.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/text_summarizer/eval/results.json) · 5 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Near-duplicate question detector](systems/dedupe_questions/README.md)
+
+Flag probable duplicate support questions with token Jaccard similarity.
+
+**Before you start:** Basic Python and string comparison.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/dedupe_questions/eval/results.json) · 5 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [PII pattern redactor](systems/pii_redactor/README.md)
+
+Find and mask obvious email, phone, SSN, and credit-card-shaped strings in free text.
+
+**Before you start:** Basic Python and regular expressions.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/pii_redactor/eval/results.json) · 5 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Lexicon-based sentiment classifier](systems/sentiment_lexicon/README.md)
+
+Classify short text as positive, negative, or neutral using a small hand-built word list.
+
+**Before you start:** Basic Python and word lists.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/sentiment_lexicon/eval/results.json) · 5 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Readability grade scorer](systems/readability_scorer/README.md)
+
+Estimate a Flesch-Kincaid-style reading grade level and bucket it into simple/standard/complex.
+
+**Before you start:** Basic Python; no linguistics background needed.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/readability_scorer/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [FAQ intent router](systems/faq_router/README.md)
+
+Route a short support message to one of five fixed intents using keyword overlap.
+
+**Before you start:** Basic Python and keyword matching.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/faq_router/eval/results.json) · 6 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [CSV/record schema validator](systems/csv_schema_validator/README.md)
+
+Catch missing required fields and type mismatches in structured records before they reach an AI pipeline.
+
+**Before you start:** Basic Python and JSON/dictionary data.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/csv_schema_validator/eval/results.json) · 5 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
 ### Intermediate
 
 For people comfortable with basic Python who want to work with data and evaluation metrics.
@@ -129,6 +192,69 @@ Explore normalized keys, TTL expiry, LRU eviction, and model/version isolation.
 
 **Try this:** run the project README quickstart, then its test and evaluator.
 [Evaluation results and cases](systems/semantic_cache/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Synonym query rewriter](systems/query_rewriter/README.md)
+
+Expand a query with a small synonym list before BM25 retrieval, and measure the recall it recovers.
+
+**Before you start:** Python functions and basic lexical retrieval.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/query_rewriter/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Prompt-injection pattern scanner](systems/prompt_injection_detector/README.md)
+
+Scan untrusted text for common prompt-injection phrasing before it reaches a model.
+
+**Before you start:** Regular expressions and basic LLM-safety concepts.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/prompt_injection_detector/eval/results.json) · 6 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Cost and latency guardrail tracker](systems/cost_latency_tracker/README.md)
+
+Summarize a request log into p50/p95 latency and cost, then flag budget breaches.
+
+**Before you start:** Basic statistics (percentiles) and Python.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/cost_latency_tracker/eval/results.json) · 3 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Post-OCR table reconstruction](systems/table_extractor/README.md)
+
+Cluster OCR line bounding boxes into rows and columns to rebuild a simple table grid.
+
+**Before you start:** Basic Python and coordinate geometry intuition.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/table_extractor/eval/results.json) · 2 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Image caption QC](systems/caption_qc/README.md)
+
+Run rule-based checks on autogenerated image captions: placeholders, length, and required keywords.
+
+**Before you start:** Basic Python and string checks.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/caption_qc/eval/results.json) · 5 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [RAG citation support checker](systems/citation_checker/README.md)
+
+Verify that inline citations in a generated answer are lexically supported by the cited chunk.
+
+**Before you start:** Basic Python and lexical overlap concepts.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/citation_checker/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Schema drift detector](systems/schema_drift_detector/README.md)
+
+Diff a batch of records against a declared schema: new fields, missing fields, and type mismatches.
+
+**Before you start:** Python dictionaries and basic data typing.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/schema_drift_detector/eval/results.json) · 2 small synthetic cases. Scores are learning fixtures, not production benchmarks.
 
 ### Advanced
 
@@ -169,6 +295,60 @@ Expose local search and source reads as JSON-RPC-style tools.
 
 **Try this:** run the project README quickstart, then its test and evaluator.
 [Evaluation results and cases](systems/mcp_kb/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Multi-agent triage handoff](systems/multi_agent_handoff/README.md)
+
+Route a request through a triage step to the right specialist, escalating when confidence is low.
+
+**Before you start:** Agent orchestration and escalation design.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/multi_agent_handoff/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Retrieval evaluation harness](systems/retrieval_eval_harness/README.md)
+
+Score retrieval with recall@k, MRR, and nDCG@k, and compare two strategies side by side.
+
+**Before you start:** IR evaluation metrics (recall, MRR, nDCG).
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/retrieval_eval_harness/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Canary rollout simulator](systems/canary_rollout_simulator/README.md)
+
+Compare canary metrics against a baseline to decide promote or rollback.
+
+**Before you start:** Deployment guardrails and basic statistics caveats.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/canary_rollout_simulator/eval/results.json) · 3 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Adversarial red-team harness](systems/redteam_harness/README.md)
+
+Run adversarial requests against a bounded agent's policy and measure the breach rate.
+
+**Before you start:** Agent authorization boundaries and adversarial thinking.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/redteam_harness/eval/results.json) · 5 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Trace anomaly detector](systems/trace_anomaly_detector/README.md)
+
+Flag anomalous execution-trace durations with a z-score against a historical baseline.
+
+**Before you start:** Basic statistics (mean, standard deviation, z-scores).
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/trace_anomaly_detector/eval/results.json) · 4 small synthetic cases. Scores are learning fixtures, not production benchmarks.
+
+#### [Multi-hop reasoning router](systems/multi_hop_router/README.md)
+
+Split a multi-part question into sub-questions and abstain unless every part is answered.
+
+**Before you start:** Retrieval-augmented QA and question decomposition.
+
+**Try this:** run the project README quickstart, then its test and evaluator.
+[Evaluation results and cases](systems/multi_hop_router/eval/results.json) · 3 small synthetic cases. Scores are learning fixtures, not production benchmarks.
 <!-- SYSTEMS:END -->
 
 ## Learning paths

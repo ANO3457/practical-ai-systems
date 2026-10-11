@@ -1,0 +1,14 @@
+{
+  "corpus": {
+    "d1": "Costs are eight dollars monthly.",
+    "d2": "The weather is nice and sunny today.",
+    "d3": "Cancel requests take one business day.",
+    "d4": "Delete requests take one business day too."
+  },
+  "queries": [
+    {"text": "price information please", "gold": "d1"},
+    {"text": "terminate account help", "gold": "d3"},
+    {"text": "erase my files now", "gold": "d4"},
+    {"text": "weather today", "gold": "d2"}
+  ]
+}

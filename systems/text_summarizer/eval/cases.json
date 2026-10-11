@@ -1,0 +1,27 @@
+[
+  {
+    "text": "Database indexing speeds up queries. Indexing indexing indexing is crucial for performance. The weather was nice yesterday.",
+    "key_sentence": "Indexing indexing indexing",
+    "n": 1
+  },
+  {
+    "text": "Our office closes early on Fridays. Parking parking parking is limited downtown. The cafeteria serves lunch at noon.",
+    "key_sentence": "Parking parking parking",
+    "n": 1
+  },
+  {
+    "text": "Rockets rockets rockets launch from the coast. The museum opens at nine. Gift shops sell postcards.",
+    "key_sentence": "Rockets rockets rockets",
+    "n": 1
+  },
+  {
+    "text": "Onboarding onboarding onboarding takes one day. The office has a rooftop garden. Lunch is provided on Mondays.",
+    "key_sentence": "Onboarding onboarding onboarding",
+    "n": 1
+  },
+  {
+    "text": "Glaciers glaciers glaciers are melting faster. Tourists visit the lake in summer. Local guides lead short hikes.",
+    "key_sentence": "Glaciers glaciers glaciers",
+    "n": 1
+  }
+]

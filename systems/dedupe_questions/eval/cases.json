@@ -1,0 +1,7 @@
+[
+  {"a": "How do I reset my password?", "b": "How can I reset my password?", "duplicate": true},
+  {"a": "What is your refund policy?", "b": "What is your return policy?", "duplicate": false},
+  {"a": "Where is my order?", "b": "Track my order status", "duplicate": false},
+  {"a": "Cancel my subscription please", "b": "I want to cancel my subscription", "duplicate": true},
+  {"a": "What time do you open?", "b": "What's your return policy?", "duplicate": false}
+]

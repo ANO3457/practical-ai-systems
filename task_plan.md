@@ -1,6 +1,6 @@
 # Practical AI Systems — product plan
 
-_Last updated: 2026-10-07_
+_Last updated: 2026-10-11_
 
 ## Product idea
 
@@ -10,7 +10,7 @@ This repository is not a ranking, endorsement, or mirror of other collections. T
 
 ## Current inventory
 
-- 10 offline-first runnable system prototypes under `systems/`.
+- 30 offline-first runnable system prototypes under `systems/` (10 Beginner, 10 Intermediate, 10 Advanced).
 - Each system includes a quickstart, code, small synthetic evaluation fixtures, a recorded result, and stated limitations.
 - Shared provider, text, and metric helpers live in `common/`.
 - The README has entry points for first-timers, students, instructors, and professional teams, with Beginner / Intermediate / Advanced project levels.
@@ -31,10 +31,16 @@ Current quality boundary: the examples are learning prototypes, not production s
 
 ## Roadmap
 
-### Phase 1 — First 10 systems (prototype set in place; quality polish remains)
+### Phase 1 — First 10 systems (done)
 - [x] Build first-pass examples spanning retrieval, extraction, agents, evaluation, and operations.
 - [x] Give each example its own code, synthetic cases, result packet, and focused tests.
 - [x] Add shared offline evaluation and CI checks.
+
+### Phase 1b — Grow to 10 systems per level (done 2026-10-11)
+- [x] Add 7 more Beginner systems (10 total): extractive summarization, near-duplicate detection, PII redaction, lexicon sentiment, readability scoring, FAQ intent routing, and schema validation.
+- [x] Add 7 more Intermediate systems (10 total): query rewriting, prompt-injection scanning, cost/latency guardrails, OCR table reconstruction, caption QC, RAG citation checking, and schema drift detection.
+- [x] Add 6 more Advanced systems (10 total): multi-agent handoff, a retrieval evaluation harness, a canary rollout simulator, an adversarial red-team harness, trace anomaly detection, and multi-hop reasoning.
+- [x] Register every new system in `scripts/evaluate_systems.py` and `scripts/render_systems.py`, regenerate `eval/results.json` for all 30, and regenerate the README index.
 - [ ] Review each README for one-command-first usability, prerequisites, and a clear “when not to use this.”
 - [ ] Expand thin evaluation sets with more edge cases and independently reviewed labels.
 - [ ] Add a fresh-clone smoke-test job to CI.
@@ -52,7 +58,8 @@ Current quality boundary: the examples are learning prototypes, not production s
 - [ ] Schedule a read-only freshness report for external links and dependency changes.
 
 ### Phase 4 — Scale by demonstrated usefulness
-- [ ] Grow toward 30 then 50 systems only if each addition meets the same run/eval/failure-mode bar.
+- [x] Grow toward 30 systems only if each addition meets the same run/eval/failure-mode bar (reached 30 on 2026-10-11: 10 Beginner, 10 Intermediate, 10 Advanced).
+- [ ] Grow toward 50 systems only if each addition still meets that bar.
 - [ ] Add a generated docs site only if learners need navigation that GitHub Markdown cannot provide.
 - [ ] Add cross-system comparisons only when methods, versions, datasets, and conditions are genuinely comparable.
 - [ ] Use reader issues, pull requests, and usage signals to choose the next systems; do not optimize for vanity counts.
@@ -69,6 +76,6 @@ Current quality boundary: the examples are learning prototypes, not production s
 ## Immediate next actions
 
 1. Polish the first-run path and Beginner / Intermediate / Advanced sections in `/Users/s0n0611/Documents/GitHub/practical-ai-systems/README.md`.
-2. Review each of the ten system READMEs against the acceptance bar.
+2. Review each of the thirty system READMEs against the acceptance bar.
 3. Strengthen the smallest synthetic evaluations, beginning with voice safety and judge-agreement cases.
 4. Add fresh-clone validation before expanding the project count.

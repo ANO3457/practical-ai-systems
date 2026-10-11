@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "cases": 4,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "citation_status_accuracy": 1.0
+  },
+  "notes": "lexical overlap over one synthetic answer with four inline citations",
+  "system": "citation_checker"
+}

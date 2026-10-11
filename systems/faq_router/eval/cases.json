@@ -1,0 +1,8 @@
+[
+  {"text": "Hi there, how are you?", "intent": "greeting"},
+  {"text": "I want to cancel my subscription", "intent": "cancel_request"},
+  {"text": "The app keeps crashing and showing an error", "intent": "technical_issue"},
+  {"text": "What's your refund policy for canceled orders?", "intent": "billing_question"},
+  {"text": "Thanks so much, goodbye!", "intent": "goodbye"},
+  {"text": "asdkj qwleoi zzxcv", "intent": "unknown"}
+]

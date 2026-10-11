@@ -1,0 +1,17 @@
+[
+  {
+    "baseline": {"error_rate": 0.01, "p95_latency_ms": 200},
+    "canary": {"error_rate": 0.015, "p95_latency_ms": 210},
+    "gold_decision": "promote"
+  },
+  {
+    "baseline": {"error_rate": 0.01, "p95_latency_ms": 200},
+    "canary": {"error_rate": 0.05, "p95_latency_ms": 205},
+    "gold_decision": "rollback"
+  },
+  {
+    "baseline": {"error_rate": 0.01, "p95_latency_ms": 200},
+    "canary": {"error_rate": 0.012, "p95_latency_ms": 400},
+    "gold_decision": "rollback"
+  }
+]

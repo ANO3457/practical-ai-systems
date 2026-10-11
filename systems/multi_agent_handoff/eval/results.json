@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "cases": 4,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "handoff_accuracy": 1.0
+  },
+  "notes": "fixed keyword-overlap triage over three categories; escalation threshold is a hand-picked constant",
+  "system": "multi_agent_handoff"
+}

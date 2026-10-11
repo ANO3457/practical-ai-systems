@@ -1,0 +1,6 @@
+[
+  {"text": "The cat sat on the mat. It was a hot day.", "band": "simple"},
+  {"text": "I like dogs. Dogs are fun. We play all day.", "band": "simple"},
+  {"text": "Our new feature lets you schedule reports automatically every week.", "band": "standard"},
+  {"text": "Notwithstanding the aforementioned stipulations, the organization's multifaceted obligations necessitate comprehensive reevaluation.", "band": "complex"}
+]

@@ -1,0 +1,32 @@
+# FAQ intent router
+
+Route a short support message to one of five fixed intents (or "unknown") using keyword overlap.
+
+**Level:** starter · **Runs locally:** yes · **Credentials:** none · **Dependencies:** Python standard library only
+
+## Quickstart
+
+Run from the repository root:
+
+```bash
+python3 -m systems.faq_router.app "I want to cancel my subscription"
+```
+
+## Evaluate and test
+
+```bash
+python3 -m systems.faq_router.evaluate
+python3 -m unittest systems.faq_router.test_router
+```
+
+The evaluation uses the small synthetic dataset shipped in this folder. Results describe this implementation on those fixtures only; they are not general performance claims.
+
+## Results snapshot
+
+See [`eval/results.json`](eval/results.json) for current routing accuracy on 6 synthetic messages, including a tied-keyword case and an off-topic fallback case.
+
+## Known limitations
+
+- Intents are a fixed, hand-picked keyword list; anything phrased without those words routes to "unknown" even when a human would understand it immediately.
+- Ties between intents resolve to whichever intent is checked first, which is an arbitrary order, not a confidence ranking.
+- Synthetic data is not representative of real production traffic. Expand and independently label cases before relying on these results.

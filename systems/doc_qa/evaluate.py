@@ -4,11 +4,26 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from common.evaluation import mean, write_results
-from common.llm import from_env
-from systems.doc_qa.app import DocQA, load_chunks
+from systems.doc_qa.app import DocQA, from_env, load_chunks
 
 EVAL_DIR = Path(__file__).parent / "eval"
+
+
+def mean(values) -> float:
+    values = list(values)
+    return sum(values) / len(values) if values else 0.0
+
+
+def write_results(path: Path, system: str, method: str, metrics: dict, cases: int, notes: str = "") -> dict:
+    record = {
+        "system": system,
+        "method": method,
+        "dataset": {"cases": cases, "source": "synthetic, committed in eval/"},
+        "metrics": {k: round(v, 4) if isinstance(v, float) else v for k, v in sorted(metrics.items())},
+        "notes": notes,
+    }
+    Path(path).write_text(json.dumps(record, indent=2) + "\n")
+    return record
 
 
 def evaluate(llm=None, write: bool = False) -> dict:

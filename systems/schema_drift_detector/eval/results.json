@@ -1,0 +1,12 @@
+{
+  "dataset": {
+    "cases": 2,
+    "source": "synthetic fixtures committed with system"
+  },
+  "method": "deterministic evaluation on synthetic fixtures",
+  "metrics": {
+    "exact_report_match": 1.0
+  },
+  "notes": "declared-schema diff only; no semantic or value-range drift detection",
+  "system": "schema_drift_detector"
+}

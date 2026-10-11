@@ -1,0 +1,38 @@
+[
+  {
+    "requests": [
+      {"latency_ms": 100, "cost_usd": 0.01, "tokens": 1000},
+      {"latency_ms": 110, "cost_usd": 0.01, "tokens": 1000},
+      {"latency_ms": 120, "cost_usd": 0.01, "tokens": 1000},
+      {"latency_ms": 130, "cost_usd": 0.01, "tokens": 1000},
+      {"latency_ms": 500, "cost_usd": 0.01, "tokens": 1000}
+    ],
+    "max_p95_latency_ms": 300,
+    "max_cost_usd": 1.0,
+    "gold_breached": true
+  },
+  {
+    "requests": [
+      {"latency_ms": 50, "cost_usd": 0.001, "tokens": 500},
+      {"latency_ms": 52, "cost_usd": 0.001, "tokens": 500},
+      {"latency_ms": 55, "cost_usd": 0.001, "tokens": 500},
+      {"latency_ms": 58, "cost_usd": 0.001, "tokens": 500},
+      {"latency_ms": 60, "cost_usd": 0.001, "tokens": 500}
+    ],
+    "max_p95_latency_ms": 200,
+    "max_cost_usd": 1.0,
+    "gold_breached": false
+  },
+  {
+    "requests": [
+      {"latency_ms": 50, "cost_usd": 5.0, "tokens": 500},
+      {"latency_ms": 52, "cost_usd": 5.0, "tokens": 500},
+      {"latency_ms": 55, "cost_usd": 5.0, "tokens": 500},
+      {"latency_ms": 58, "cost_usd": 5.0, "tokens": 500},
+      {"latency_ms": 60, "cost_usd": 5.0, "tokens": 500}
+    ],
+    "max_p95_latency_ms": 200,
+    "max_cost_usd": 1.0,
+    "gold_breached": true
+  }
+]

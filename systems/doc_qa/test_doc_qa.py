@@ -1,7 +1,6 @@
 import unittest
 
-from common.llm import StubLLM
-from systems.doc_qa.app import DocQA, load_chunks
+from systems.doc_qa.app import DocQA, StubLLM, load_chunks
 from systems.doc_qa.evaluate import evaluate
 
 

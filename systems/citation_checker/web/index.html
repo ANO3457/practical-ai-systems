@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Citation Support Checker</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; line-height: 1.5; }
+  textarea { width: 100%; font: inherit; padding: 0.5rem; box-sizing: border-box; margin-top: 0.25rem; }
+  label { font-weight: 600; font-size: 0.9rem; display: block; margin-top: 1rem; }
+  button { padding: 0.5rem 1.25rem; margin-top: 0.75rem; margin-right: 0.5rem; cursor: pointer; border: 1px solid #333; background: #1a1a1a; color: white; border-radius: 4px; }
+  button.secondary { background: white; color: #1a1a1a; }
+  pre { background: #f4f4f4; padding: 1rem; overflow-x: auto; white-space: pre-wrap; border-radius: 4px; min-height: 1.5rem; }
+  .limits { font-size: 0.9rem; color: #555; border-top: 1px solid #ddd; margin-top: 2rem; padding-top: 1rem; }
+</style>
+</head>
+<body>
+  <h1>Citation Support Checker</h1>
+  <p>Flag inline [chunk_id] citations whose claim vocabulary does not overlap with the cited source. Runs entirely in your browser against two bundled sample chunks (billing.md#1, sync.md#1).</p>
+  <label for="text">Answer text with citations</label>
+  <textarea id="text" rows="3">The Pro plan costs $8 per month [billing.md#1].</textarea>
+  <button id="run">Check citations</button>
+  <pre id="output"></pre>
+  <button id="run-eval" class="secondary">Run evaluation (4 synthetic answers)</button>
+  <pre id="eval-output"></pre>
+  <div class="limits"><strong>Known limitations:</strong> lexical overlap only -- cannot verify numeric facts or
+  anything merely implied by the source. See the project <a href="../README.md">README</a> for the full write-up and the Python CLI version.</div>
+  <script type="module" src="./dist/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "question": "How much does the Pro plan cost and how often do notes sync?",
+    "gold_abstained": false
+  },
+  {
+    "question": "How much does the Pro plan cost and does Lumen Notes integrate with Salesforce CRM?",
+    "gold_abstained": true
+  },
+  {
+    "question": "How often do notes sync? How do I reset my password?",
+    "gold_abstained": false
+  }
+]

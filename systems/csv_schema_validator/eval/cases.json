@@ -1,0 +1,15 @@
+{
+  "schema": {
+    "id": {"type": "number", "required": true},
+    "name": {"type": "string", "required": true},
+    "active": {"type": "boolean", "required": false}
+  },
+  "rows": [
+    {"id": 1, "name": "Alice", "active": true},
+    {"id": "two", "name": "Bob"},
+    {"name": "Carol"},
+    {"id": 4, "name": "Dan", "active": "yes"},
+    {"id": 5, "name": "Eve"}
+  ],
+  "gold_valid": [true, false, false, false, true]
+}
