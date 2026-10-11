@@ -1,0 +1,7 @@
+{
+  "title": "Judge agreement audit",
+  "level": "Advanced",
+  "order": 22,
+  "prerequisites": "Classification metrics and labeled data.",
+  "hook": "Compare a heuristic with human ratings and inspect rater disagreement."
+}

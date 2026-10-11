@@ -1,0 +1,7 @@
+{
+  "title": "Prompt-injection pattern scanner",
+  "level": "Intermediate",
+  "order": 15,
+  "prerequisites": "Regular expressions and basic LLM-safety concepts.",
+  "hook": "Scan untrusted text for common prompt-injection phrasing before it reaches a model."
+}

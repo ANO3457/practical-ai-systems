@@ -1,0 +1,7 @@
+{
+  "title": "Multi-agent triage handoff",
+  "level": "Advanced",
+  "order": 25,
+  "prerequisites": "Agent orchestration and escalation design.",
+  "hook": "Route a request through a triage step to the right specialist, escalating when confidence is low."
+}

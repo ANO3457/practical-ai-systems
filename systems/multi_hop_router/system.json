@@ -1,0 +1,7 @@
+{
+  "title": "Multi-hop reasoning router",
+  "level": "Advanced",
+  "order": 30,
+  "prerequisites": "Retrieval-augmented QA and question decomposition.",
+  "hook": "Split a multi-part question into sub-questions and abstain unless every part is answered."
+}

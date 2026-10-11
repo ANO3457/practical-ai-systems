@@ -1,0 +1,7 @@
+{
+  "title": "Near-duplicate question detector",
+  "level": "Beginner",
+  "order": 5,
+  "prerequisites": "Basic Python and string comparison.",
+  "hook": "Flag probable duplicate support questions with token Jaccard similarity."
+}

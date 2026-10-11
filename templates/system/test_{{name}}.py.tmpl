@@ -1,0 +1,15 @@
+import unittest
+
+from systems.{{name}}.app import run
+
+
+class {{title_class}}Tests(unittest.TestCase):
+    def test_short_text(self):
+        self.assertEqual(run("hi there")["label"], "short")
+
+    def test_long_text(self):
+        self.assertEqual(run("one two three four five six")["label"], "long")
+
+
+if __name__ == "__main__":
+    unittest.main()

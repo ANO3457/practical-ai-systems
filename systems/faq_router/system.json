@@ -1,0 +1,7 @@
+{
+  "title": "FAQ intent router",
+  "level": "Beginner",
+  "order": 9,
+  "prerequisites": "Basic Python and keyword matching.",
+  "hook": "Route a short support message to one of five fixed intents using keyword overlap."
+}

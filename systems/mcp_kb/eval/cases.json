@@ -1,0 +1,6 @@
+[
+  {"query": "password reset", "gold": "accounts.md#1"},
+  {"query": "Pro monthly cost", "gold": "billing.md#1"},
+  {"query": "offline conflict copy", "gold": "sync.md#3"},
+  {"query": "public sharing revoke", "gold": "sharing.md#1"}
+]

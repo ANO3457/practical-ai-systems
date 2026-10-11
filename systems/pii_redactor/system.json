@@ -1,0 +1,7 @@
+{
+  "title": "PII pattern redactor",
+  "level": "Beginner",
+  "order": 6,
+  "prerequisites": "Basic Python and regular expressions.",
+  "hook": "Find and mask obvious email, phone, SSN, and credit-card-shaped strings in free text."
+}

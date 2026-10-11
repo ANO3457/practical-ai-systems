@@ -1,0 +1,7 @@
+{
+  "title": "Invoice field extraction",
+  "level": "Beginner",
+  "order": 2,
+  "prerequisites": "Basic Python and key/value data.",
+  "hook": "Extract invoice fields, then validate dates and arithmetic."
+}

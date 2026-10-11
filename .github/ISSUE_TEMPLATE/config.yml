@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea
+    url: https://github.com/shivamnegi92/practical-ai-systems/discussions
+    about: Ask how a system works or float an idea before opening an issue.
+  - name: Security report
+    url: https://github.com/shivamnegi92/practical-ai-systems/security/advisories/new
+    about: Report a leaked secret or tooling vulnerability privately.

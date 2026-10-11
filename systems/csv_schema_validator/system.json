@@ -1,0 +1,7 @@
+{
+  "title": "CSV/record schema validator",
+  "level": "Beginner",
+  "order": 10,
+  "prerequisites": "Basic Python and JSON/dictionary data.",
+  "hook": "Catch missing required fields and type mismatches in structured records before they reach an AI pipeline."
+}

@@ -1,0 +1,7 @@
+import { test } from "node:test";
+import { strict as assert } from "node:assert";
+import { evaluateAll, run } from "./app.js";
+
+test("short text", () => assert.equal(run("hi there").label, "short"));
+test("long text", () => assert.equal(run("one two three four five six").label, "long"));
+test("evaluation matches fixtures", () => assert.equal(evaluateAll().accuracy, 1));

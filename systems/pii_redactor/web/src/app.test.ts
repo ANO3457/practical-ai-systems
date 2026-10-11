@@ -25,3 +25,11 @@ test("ssn pattern does not also match as phone", () => {
 test("evaluation is perfect on the bundled fixtures", () => {
   assert.equal(evaluateAll().f1, 1);
 });
+
+test("parenthesized area code is fully redacted", () => {
+  assert.equal(redact("Call (555) 123-4567 now."), "Call [REDACTED:PHONE] now.");
+});
+
+test("dashed phone is fully redacted", () => {
+  assert.equal(redact("Call 555-123-4567 now."), "Call [REDACTED:PHONE] now.");
+});

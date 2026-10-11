@@ -1,0 +1,7 @@
+{
+  "title": "Cost and latency guardrail tracker",
+  "level": "Intermediate",
+  "order": 16,
+  "prerequisites": "Basic statistics (percentiles) and Python.",
+  "hook": "Summarize a request log into p50/p95 latency and cost, then flag budget breaches."
+}

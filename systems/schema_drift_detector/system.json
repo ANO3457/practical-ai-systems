@@ -1,0 +1,7 @@
+{
+  "title": "Schema drift detector",
+  "level": "Intermediate",
+  "order": 20,
+  "prerequisites": "Python dictionaries and basic data typing.",
+  "hook": "Diff a batch of records against a declared schema: new fields, missing fields, and type mismatches."
+}

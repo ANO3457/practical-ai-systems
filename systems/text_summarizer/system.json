@@ -1,0 +1,7 @@
+{
+  "title": "Extractive text summarizer",
+  "level": "Beginner",
+  "order": 4,
+  "prerequisites": "Terminal basics; Python is optional to run it.",
+  "hook": "Pick the most representative sentences from a short document using word-frequency scoring."
+}

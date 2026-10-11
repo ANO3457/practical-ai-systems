@@ -1,0 +1,27 @@
+"""{{title}}: {{hook}}
+
+Standalone: imports only the Python standard library.
+"""
+from __future__ import annotations
+
+import argparse
+import re
+
+WORD_RE = re.compile(r"[a-z0-9]+")
+
+
+def run(text: str) -> dict:
+    """Placeholder logic -- replace with your system. Returns a JSON-friendly dict."""
+    words = WORD_RE.findall(text.lower())
+    return {"word_count": len(words), "label": "long" if len(words) > 5 else "short"}
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("text")
+    args = parser.parse_args()
+    print(run(args.text))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,7 @@
+{
+  "title": "Readability grade scorer",
+  "level": "Beginner",
+  "order": 8,
+  "prerequisites": "Basic Python; no linguistics background needed.",
+  "hook": "Estimate a Flesch-Kincaid-style reading grade level and bucket it into simple/standard/complex."
+}

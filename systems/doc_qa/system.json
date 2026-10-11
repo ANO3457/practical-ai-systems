@@ -1,0 +1,7 @@
+{
+  "title": "Document Q&A with citations",
+  "level": "Beginner",
+  "order": 1,
+  "prerequisites": "Terminal basics; Python is optional to run it.",
+  "hook": "Find a source paragraph, answer from its evidence, cite it, or abstain."
+}

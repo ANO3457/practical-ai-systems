@@ -1,0 +1,7 @@
+{
+  "title": "Retrieval evaluation harness",
+  "level": "Advanced",
+  "order": 26,
+  "prerequisites": "IR evaluation metrics (recall, MRR, nDCG).",
+  "hook": "Score retrieval with recall@k, MRR, and nDCG@k, and compare two strategies side by side."
+}

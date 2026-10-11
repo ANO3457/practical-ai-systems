@@ -1,0 +1,7 @@
+{
+  "title": "RAG citation support checker",
+  "level": "Intermediate",
+  "order": 19,
+  "prerequisites": "Basic Python and lexical overlap concepts.",
+  "hook": "Verify that inline citations in a generated answer are lexically supported by the cited chunk."
+}

@@ -1,0 +1,20 @@
+import json
+from pathlib import Path
+
+from systems.{{name}}.app import run
+
+EVAL_DIR = Path(__file__).parent / "eval"
+
+
+def evaluate() -> dict:
+    cases = json.loads((EVAL_DIR / "cases.json").read_text())
+    correct = sum(run(c["text"])["label"] == c["label"] for c in cases)
+    return {
+        "cases": len(cases),
+        "accuracy": round(correct / len(cases), 4) if cases else 0.0,
+        "scope": "placeholder synthetic fixtures; replace before submitting",
+    }
+
+
+if __name__ == "__main__":
+    print(json.dumps(evaluate(), indent=2))

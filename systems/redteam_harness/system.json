@@ -1,0 +1,7 @@
+{
+  "title": "Adversarial red-team harness",
+  "level": "Advanced",
+  "order": 28,
+  "prerequisites": "Agent authorization boundaries and adversarial thinking.",
+  "hook": "Run adversarial requests against a bounded agent's policy and measure the breach rate."
+}

@@ -11,19 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-SYSTEMS = (
-    # Beginner
-    "doc_qa", "invoice_extract", "repo_guard", "text_summarizer", "dedupe_questions",
-    "pii_redactor", "sentiment_lexicon", "readability_scorer", "faq_router", "csv_schema_validator",
-    # Intermediate
-    "multimodal_ocr", "entity_extraction", "semantic_cache", "query_rewriter",
-    "prompt_injection_detector", "cost_latency_tracker", "table_extractor",
-    "caption_qc", "citation_checker", "schema_drift_detector",
-    # Advanced
-    "voice_eval", "judge_audit", "bounded_agent", "mcp_kb", "multi_agent_handoff",
-    "retrieval_eval_harness", "canary_rollout_simulator", "redteam_harness",
-    "trace_anomaly_detector", "multi_hop_router",
-)
+from scripts.registry import load_manifests  # noqa: E402
+
+SYSTEMS = tuple(load_manifests())
 COUNT_FIELDS = ("cases", "calls", "documents", "entries")
 
 
@@ -54,17 +44,17 @@ def normalize(name: str, raw: dict) -> dict:
     }
 
 
-def run_all() -> dict[str, dict]:
+def run_all(names: tuple[str, ...] = SYSTEMS) -> dict[str, dict]:
     results = {}
-    for name in SYSTEMS:
+    for name in names:
         module = importlib.import_module(f"systems.{name}.evaluate")
         results[name] = normalize(name, module.evaluate())
     return results
 
 
-def validate(results: dict[str, dict]) -> list[str]:
+def validate(results: dict[str, dict], expected: tuple[str, ...] = SYSTEMS) -> list[str]:
     errors = []
-    if set(results) != set(SYSTEMS):
+    if set(results) != set(expected):
         errors.append("system evaluation set does not match the declared systems")
     for name, result in results.items():
         dataset = result.get("dataset", {})
@@ -81,9 +71,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="validate result packets")
     parser.add_argument("--write", action="store_true", help="write normalized eval/results.json packets")
+    parser.add_argument("--only", help="evaluate a single system by folder name")
     args = parser.parse_args()
-    results = run_all()
-    errors = validate(results) if args.check else []
+    if args.only and args.only not in SYSTEMS:
+        print(f"unknown system: {args.only}", file=sys.stderr)
+        return 1
+    selected = (args.only,) if args.only else SYSTEMS
+    results = run_all(selected)
+    errors = validate(results, selected) if args.check else []
     for name, result in results.items():
         print(f"{name}: {json.dumps(result, sort_keys=True)}")
         if args.write:

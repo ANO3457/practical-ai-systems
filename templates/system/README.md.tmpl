@@ -1,0 +1,35 @@
+# {{title}}
+
+{{hook}}
+
+**Runs locally:** yes · **Credentials:** none · **Dependencies:** Python standard library only
+
+## Quickstart
+
+Run from the repository root:
+
+```bash
+python3 -m systems.{{name}}.app "your input text"
+```
+
+## Evaluate and test
+
+```bash
+python3 -m systems.{{name}}.evaluate
+python3 -m unittest discover -s systems/{{name}} -t . -v
+```
+
+## Web app
+
+```bash
+cd systems/{{name}}/web && npm install && npm start   # http://localhost:4173
+```
+
+## Results snapshot
+
+See [`eval/results.json`](eval/results.json). Scores come from small synthetic fixtures and are learning aids, not benchmarks.
+
+## Known limitations
+
+- TODO: describe concrete failure modes of this approach.
+- Synthetic data is not representative of real traffic.

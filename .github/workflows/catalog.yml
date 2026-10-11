@@ -9,29 +9,81 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  validate:
+  python:
+    name: Python (${{ matrix.python }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12", "3.13"]
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
+      - name: Contribution contract (structure, standalone imports, placeholders)
+        run: python scripts/check_systems.py
       - name: Validate records and generated views
         run: python scripts/build_catalog.py
-      - name: Run tests
-        run: python -m unittest discover -s tests -v
-      - name: Run decision path tests
-        run: python -m unittest discover -s tests -p 'test_paths.py' -v
-      - name: Run shared and system tests
-        run: python -m unittest discover -s common -t . -v && python -m unittest discover -s systems -p 'test_*.py' -v
+      - name: Shared, system, repository, and example tests
+        run: |
+          python -m unittest discover -s common -t . -v
+          python -m unittest discover -s systems -p 'test_*.py' -v
+          python -m unittest discover -s tests -v
+          python -m unittest discover -s examples -p 'test_*.py' -v
       - name: Verify reproducible system reports
-        run: python scripts/evaluate_systems.py --check && python scripts/evaluate_systems.py --write && git diff --exit-code -- systems/*/eval/results.json
-      - name: Validate system README index
-        run: python scripts/render_systems.py
-      - name: Run example tests
-        run: python -m unittest discover -s examples -p 'test_*.py' -v
+        run: |
+          python scripts/evaluate_systems.py --check --write
+          git diff --exit-code -- 'systems/*/eval/results.json' || (echo "::error::eval/results.json is stale. Run 'make eval' and commit the result." && exit 1)
+      - name: Validate README project index
+        run: python scripts/render_systems.py || (echo "::error::README index is stale. Run 'make readme' and commit the result." && exit 1)
       - name: Check whitespace errors
         run: git diff --check
+
+  changes:
+    name: Detect changed web apps
+    runs-on: ubuntu-latest
+    outputs:
+      systems: ${{ steps.find.outputs.systems }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: find
+        name: List web apps to test
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            changed=$(git diff --name-only "$base" HEAD -- systems/ templates/ | awk -F/ '$1=="systems"{print $2}' | sort -u)
+            if git diff --name-only "$base" HEAD | grep -q '^templates/'; then changed=$(ls systems); fi
+          else
+            changed=$(ls systems)
+          fi
+          list=$(for s in $changed; do [ -d "systems/$s/web" ] && echo "$s"; done | jq -R . | jq -cs .)
+          echo "systems=${list:-[]}" >> "$GITHUB_OUTPUT"
+          echo "Web apps to test: $list"
+
+  web:
+    name: Web app (${{ matrix.system }})
+    needs: changes
+    if: needs.changes.outputs.systems != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        system: ${{ fromJson(needs.changes.outputs.systems) }}
+    defaults:
+      run:
+        working-directory: systems/${{ matrix.system }}/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm test

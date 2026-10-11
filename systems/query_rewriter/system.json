@@ -1,0 +1,7 @@
+{
+  "title": "Synonym query rewriter",
+  "level": "Intermediate",
+  "order": 14,
+  "prerequisites": "Python functions and basic lexical retrieval.",
+  "hook": "Expand a query with a small synonym list before BM25 retrieval, and measure the recall it recovers."
+}

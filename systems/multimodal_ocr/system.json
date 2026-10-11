@@ -1,0 +1,7 @@
+{
+  "title": "Post-OCR document extraction",
+  "level": "Intermediate",
+  "order": 11,
+  "prerequisites": "Basic Python and JSON/list/dictionary data.",
+  "hook": "Normalize OCR line order from bounding boxes, then extract fields. OCR itself is not run."
+}

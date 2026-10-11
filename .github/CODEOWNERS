@@ -1,0 +1,5 @@
+# Default reviewer for everything. Add per-system owners below as contributors
+# take ownership, e.g.:  /systems/doc_qa/  @contributor-handle
+*                 @shivamnegi92
+/.github/         @shivamnegi92
+/scripts/         @shivamnegi92

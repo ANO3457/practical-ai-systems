@@ -1,0 +1,7 @@
+{
+  "title": "Trace anomaly detector",
+  "level": "Advanced",
+  "order": 29,
+  "prerequisites": "Basic statistics (mean, standard deviation, z-scores).",
+  "hook": "Flag anomalous execution-trace durations with a z-score against a historical baseline."
+}

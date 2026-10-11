@@ -36,6 +36,8 @@ python3 -m systems.doc_qa.evaluate
 python3 -m unittest systems.doc_qa.test_doc_qa -v
 ```
 
+Prefer a browser? Every project also ships a zero-dependency web app. Try them all in the [live gallery](https://shivamnegi92.github.io/practical-ai-systems/), or run one locally with `make serve SYSTEM=doc_qa` (needs Node 20+).
+
 ## Featured builds
 
 <table>
@@ -399,7 +401,21 @@ Treat examples as design patterns, not production services. Review data handling
 
 ## Contribute
 
-Improve a quickstart, add a failure case, or propose a project. Start with [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions of every size are welcome, from a typo fix to a whole new system. Every rule is checked automatically with a fix-it hint.
+
+```bash
+make check                                   # run everything CI runs
+make new SYSTEM=my_system                    # scaffold a new system that passes CI out of the box
+make test SYSTEM=doc_qa                      # test one system
+make eval SYSTEM=doc_qa                      # regenerate its eval/results.json
+make serve SYSTEM=doc_qa                     # open its web app at http://localhost:4173
+```
+
+- **5 minutes:** fix a README or [report a failing case](https://github.com/shivamnegi92/practical-ai-systems/issues/new?template=failing-case.yml).
+- **30 minutes:** add eval cases that break a system, or improve a web app.
+- **A few hours:** add a new system with [`docs/ADDING_A_SYSTEM.md`](docs/ADDING_A_SYSTEM.md).
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Look for [`good first issue`](https://github.com/shivamnegi92/practical-ai-systems/labels/good%20first%20issue).
 
 ## More resources
 

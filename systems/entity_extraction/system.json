@@ -1,0 +1,7 @@
+{
+  "title": "Entity spans and error analysis",
+  "level": "Intermediate",
+  "order": 12,
+  "prerequisites": "Python functions, regular expressions, and basic metrics.",
+  "hook": "Extract person/date/money spans and inspect exact-match precision, recall, and F1."
+}

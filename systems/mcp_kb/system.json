@@ -1,0 +1,7 @@
+{
+  "title": "Local knowledge-base MCP server",
+  "level": "Advanced",
+  "order": 24,
+  "prerequisites": "Python, JSON-RPC, and client/server concepts.",
+  "hook": "Expose local search and source reads as JSON-RPC-style tools."
+}

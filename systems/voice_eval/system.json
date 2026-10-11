@@ -1,0 +1,7 @@
+{
+  "title": "Voice-agent transcript evaluator",
+  "level": "Advanced",
+  "order": 21,
+  "prerequisites": "Structured transcripts and evaluation rubrics.",
+  "hook": "Score call success, forbidden actions, and latency separately."
+}

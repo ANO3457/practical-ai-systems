@@ -1,0 +1,7 @@
+{
+  "title": "Repository hygiene checks",
+  "level": "Beginner",
+  "order": 3,
+  "prerequisites": "Basic file and folder navigation.",
+  "hook": "Run simple local checks and see why toy patterns miss real risks."
+}

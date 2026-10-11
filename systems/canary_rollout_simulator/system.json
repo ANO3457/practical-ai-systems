@@ -1,0 +1,7 @@
+{
+  "title": "Canary rollout simulator",
+  "level": "Advanced",
+  "order": 27,
+  "prerequisites": "Deployment guardrails and basic statistics caveats.",
+  "hook": "Compare canary metrics against a baseline to decide promote or rollback."
+}

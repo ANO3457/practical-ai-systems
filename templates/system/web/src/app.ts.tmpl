@@ -1,0 +1,16 @@
+// {{title}} -- TypeScript port of ../app.py. Keep logic 1:1 with the Python version.
+
+export function run(text: string): { word_count: number; label: "short" | "long" } {
+  const words = text.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+  return { word_count: words.length, label: words.length > 5 ? "long" : "short" };
+}
+
+export const EVAL_CASES = [
+  { text: "hi there", label: "short" },
+  { text: "one two three four five six", label: "long" },
+];
+
+export function evaluateAll() {
+  const correct = EVAL_CASES.filter((c) => run(c.text).label === c.label).length;
+  return { cases: EVAL_CASES.length, accuracy: correct / EVAL_CASES.length };
+}

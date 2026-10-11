@@ -3,12 +3,7 @@ import json
 from pathlib import Path
 from systems.mcp_kb.server import KnowledgeTools
 
-CASES = [
-    ("password reset", "accounts.md#1"),
-    ("Pro monthly cost", "billing.md#1"),
-    ("offline conflict copy", "sync.md#3"),
-    ("public sharing revoke", "sharing.md#1"),
-]
+CASES = [(c["query"], c["gold"]) for c in json.loads((Path(__file__).parent / "eval" / "cases.json").read_text())]
 
 
 def evaluate():

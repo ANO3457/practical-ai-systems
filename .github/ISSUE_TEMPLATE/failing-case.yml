@@ -1,0 +1,35 @@
+name: Failing case or known limitation
+description: Found an input a system gets wrong? Add it so learners can see the failure mode.
+title: "[Failing case]: "
+labels: [eval-case, good first issue]
+body:
+  - type: input
+    id: system
+    attributes:
+      label: System folder
+      placeholder: systems/pii_redactor
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Input
+      description: Synthetic input only. Never paste real personal or confidential data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs. actual output
+    validations:
+      required: true
+  - type: dropdown
+    id: intent
+    attributes:
+      label: What should happen?
+      options:
+        - Add it as an eval case and document it as a known limitation
+        - Fix the system so it handles this case
+        - Not sure, so maintainers decide
+    validations:
+      required: true

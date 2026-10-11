@@ -1,0 +1,7 @@
+{
+  "title": "Approval-gated tool workflow",
+  "level": "Advanced",
+  "order": 23,
+  "prerequisites": "Python functions, tools/APIs, and authorization concepts.",
+  "hook": "Constrain tools with an allow-list and require approval before sensitive actions."
+}

@@ -1,0 +1,13 @@
+import { evaluateAll, run } from "./app.js";
+
+const input = document.getElementById("text") as HTMLTextAreaElement;
+const output = document.getElementById("output") as HTMLOutputElement;
+const evalOutput = document.getElementById("eval-output") as HTMLOutputElement;
+
+document.getElementById("run")?.addEventListener("click", () => {
+  output.textContent = JSON.stringify(run(input.value), null, 2);
+});
+
+document.getElementById("run-eval")?.addEventListener("click", () => {
+  evalOutput.textContent = JSON.stringify(evaluateAll(), null, 2);
+});

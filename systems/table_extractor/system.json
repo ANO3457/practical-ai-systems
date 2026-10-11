@@ -1,0 +1,7 @@
+{
+  "title": "Post-OCR table reconstruction",
+  "level": "Intermediate",
+  "order": 17,
+  "prerequisites": "Basic Python and coordinate geometry intuition.",
+  "hook": "Cluster OCR line bounding boxes into rows and columns to rebuild a simple table grid."
+}

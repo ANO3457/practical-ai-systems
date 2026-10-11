@@ -21,6 +21,12 @@ class PiiRedactorTests(unittest.TestCase):
         findings = detect("SSN on file: 123-45-6789.")
         self.assertEqual([f["type"] for f in findings], ["ssn"])
 
+    def test_parenthesized_area_code_is_fully_redacted(self):
+        self.assertEqual(redact("Call (555) 123-4567 now."), "Call [REDACTED:PHONE] now.")
+
+    def test_dashed_phone_is_fully_redacted(self):
+        self.assertEqual(redact("Call 555-123-4567 now."), "Call [REDACTED:PHONE] now.")
+
 
 if __name__ == "__main__":
     unittest.main()

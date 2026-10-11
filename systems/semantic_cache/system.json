@@ -1,0 +1,7 @@
+{
+  "title": "Exact-response cache",
+  "level": "Intermediate",
+  "order": 13,
+  "prerequisites": "Python classes, dictionaries, and basic cache concepts.",
+  "hook": "Explore normalized keys, TTL expiry, LRU eviction, and model/version isolation."
+}

@@ -1,0 +1,7 @@
+{
+  "title": "Lexicon-based sentiment classifier",
+  "level": "Beginner",
+  "order": 7,
+  "prerequisites": "Basic Python and word lists.",
+  "hook": "Classify short text as positive, negative, or neutral using a small hand-built word list."
+}
