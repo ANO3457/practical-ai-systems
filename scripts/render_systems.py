@@ -16,10 +16,18 @@ SYSTEMS = load_manifests()
 START = "<!-- SYSTEMS:START -->"
 END = "<!-- SYSTEMS:END -->"
 LEVEL_SUMMARIES = {
-    "Beginner": "Start here if this is your first AI project. No model account or paid API key is needed.",
-    "Intermediate": "For people comfortable with basic Python who want to work with data and evaluation metrics.",
-    "Advanced": "For builders ready to reason about agent boundaries, protocols, and evaluation quality.",
+    "Beginner": "Start with offline examples and the core building blocks of AI systems.",
+    "Intermediate": "Combine components and measure trade-offs across common AI workflows.",
+    "Advanced": "Explore authorization, orchestration, evaluation quality, and operations.",
 }
+
+
+def _compact(text: str, limit: int = 72) -> str:
+    """Keep descriptions scannable; the full hook remains in the system guide."""
+    text = text.strip().rstrip(".")
+    if len(text) > limit:
+        text = text[:limit - 1].rsplit(" ", 1)[0].rstrip(" ,;:") + "…"
+    return text
 
 
 def _packet(root: Path, name: str) -> tuple[int, dict]:
@@ -57,12 +65,12 @@ def render_readme(readme: str, root: Path = ROOT) -> str:
 
     for level, summary in LEVEL_SUMMARIES.items():
         lines.extend([
-            f"#### {level}",
+            f"### {level}",
             "",
-            summary,
+            "A compact directory of projects by level. Read a system guide for its focus and prerequisites.",
             "",
-            "| System | What it demonstrates | Useful background | Evaluation |",
-            "|:--|:--|:--|--:|",
+            "| System | Eval cases |",
+            "|:--|--:|",
         ])
         for name, info in SYSTEMS.items():
             if info["level"] != level:
@@ -70,11 +78,8 @@ def render_readme(readme: str, root: Path = ROOT) -> str:
             count, _metrics = _packet(root, name)
             readme_path = f"systems/{name}/README.md"
             result_path = f"systems/{name}/eval/results.json"
-            hook = info["hook"].replace("|", "\\|")
-            prerequisites = info["prerequisites"].replace("|", "\\|")
             lines.append(
-                f"| [{info['title']}]({readme_path}) | {hook} | {prerequisites} | "
-                f"[{count} cases]({result_path}) |"
+                f"| [{info['title']}]({readme_path}) | [{count}]({result_path}) |"
             )
         lines.append("")
 

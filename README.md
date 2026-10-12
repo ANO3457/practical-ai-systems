@@ -86,56 +86,56 @@ Browse all 30 projects by increasing scope. You can skip ahead if you already kn
 - **[Intermediate](#intermediate)** — combine components and measure trade-offs.
 - **[Advanced](#advanced)** — work through system boundaries and operations.
 
-#### Beginner
+### Beginner
 
-Start here if this is your first AI project. No model account or paid API key is needed.
+A compact directory of projects by level. Read a system guide for its focus and prerequisites.
 
-| System | What it demonstrates | Useful background | Evaluation |
-|:--|:--|:--|--:|
-| [Document Q&A with citations](systems/doc_qa/README.md) | Find a source paragraph, answer from its evidence, cite it, or abstain. | Terminal basics; Python is optional to run it. | [22 cases](systems/doc_qa/eval/results.json) |
-| [Invoice field extraction](systems/invoice_extract/README.md) | Extract invoice fields, then validate dates and arithmetic. | Basic Python and key/value data. | [4 cases](systems/invoice_extract/eval/results.json) |
-| [Repository hygiene checks](systems/repo_guard/README.md) | Run simple local checks and see why toy patterns miss real risks. | Basic file and folder navigation. | [4 cases](systems/repo_guard/eval/results.json) |
-| [Extractive text summarizer](systems/text_summarizer/README.md) | Pick the most representative sentences from a short document using word-frequency scoring. | Terminal basics; Python is optional to run it. | [5 cases](systems/text_summarizer/eval/results.json) |
-| [Near-duplicate question detector](systems/dedupe_questions/README.md) | Flag probable duplicate support questions with token Jaccard similarity. | Basic Python and string comparison. | [5 cases](systems/dedupe_questions/eval/results.json) |
-| [PII pattern redactor](systems/pii_redactor/README.md) | Find and mask obvious email, phone, SSN, and credit-card-shaped strings in free text. | Basic Python and regular expressions. | [5 cases](systems/pii_redactor/eval/results.json) |
-| [Lexicon-based sentiment classifier](systems/sentiment_lexicon/README.md) | Classify short text as positive, negative, or neutral using a small hand-built word list. | Basic Python and word lists. | [5 cases](systems/sentiment_lexicon/eval/results.json) |
-| [Readability grade scorer](systems/readability_scorer/README.md) | Estimate a Flesch-Kincaid-style reading grade level and bucket it into simple/standard/complex. | Basic Python; no linguistics background needed. | [4 cases](systems/readability_scorer/eval/results.json) |
-| [FAQ intent router](systems/faq_router/README.md) | Route a short support message to one of five fixed intents using keyword overlap. | Basic Python and keyword matching. | [6 cases](systems/faq_router/eval/results.json) |
-| [CSV/record schema validator](systems/csv_schema_validator/README.md) | Catch missing required fields and type mismatches in structured records before they reach an AI pipeline. | Basic Python and JSON/dictionary data. | [5 cases](systems/csv_schema_validator/eval/results.json) |
+| System | Eval cases |
+|:--|--:|
+| [Document Q&A with citations](systems/doc_qa/README.md) | [22](systems/doc_qa/eval/results.json) |
+| [Invoice field extraction](systems/invoice_extract/README.md) | [4](systems/invoice_extract/eval/results.json) |
+| [Repository hygiene checks](systems/repo_guard/README.md) | [4](systems/repo_guard/eval/results.json) |
+| [Extractive text summarizer](systems/text_summarizer/README.md) | [5](systems/text_summarizer/eval/results.json) |
+| [Near-duplicate question detector](systems/dedupe_questions/README.md) | [5](systems/dedupe_questions/eval/results.json) |
+| [PII pattern redactor](systems/pii_redactor/README.md) | [5](systems/pii_redactor/eval/results.json) |
+| [Lexicon-based sentiment classifier](systems/sentiment_lexicon/README.md) | [5](systems/sentiment_lexicon/eval/results.json) |
+| [Readability grade scorer](systems/readability_scorer/README.md) | [4](systems/readability_scorer/eval/results.json) |
+| [FAQ intent router](systems/faq_router/README.md) | [6](systems/faq_router/eval/results.json) |
+| [CSV/record schema validator](systems/csv_schema_validator/README.md) | [5](systems/csv_schema_validator/eval/results.json) |
 
-#### Intermediate
+### Intermediate
 
-For people comfortable with basic Python who want to work with data and evaluation metrics.
+A compact directory of projects by level. Read a system guide for its focus and prerequisites.
 
-| System | What it demonstrates | Useful background | Evaluation |
-|:--|:--|:--|--:|
-| [Post-OCR document extraction](systems/multimodal_ocr/README.md) | Normalize OCR line order from bounding boxes, then extract fields. OCR itself is not run. | Basic Python and JSON/list/dictionary data. | [3 cases](systems/multimodal_ocr/eval/results.json) |
-| [Entity spans and error analysis](systems/entity_extraction/README.md) | Extract person/date/money spans and inspect exact-match precision, recall, and F1. | Python functions, regular expressions, and basic metrics. | [4 cases](systems/entity_extraction/eval/results.json) |
-| [Exact-response cache](systems/semantic_cache/README.md) | Explore normalized keys, TTL expiry, LRU eviction, and model/version isolation. | Python classes, dictionaries, and basic cache concepts. | [4 cases](systems/semantic_cache/eval/results.json) |
-| [Synonym query rewriter](systems/query_rewriter/README.md) | Expand a query with a small synonym list before BM25 retrieval, and measure the recall it recovers. | Python functions and basic lexical retrieval. | [4 cases](systems/query_rewriter/eval/results.json) |
-| [Prompt-injection pattern scanner](systems/prompt_injection_detector/README.md) | Scan untrusted text for common prompt-injection phrasing before it reaches a model. | Regular expressions and basic LLM-safety concepts. | [6 cases](systems/prompt_injection_detector/eval/results.json) |
-| [Cost and latency guardrail tracker](systems/cost_latency_tracker/README.md) | Summarize a request log into p50/p95 latency and cost, then flag budget breaches. | Basic statistics (percentiles) and Python. | [3 cases](systems/cost_latency_tracker/eval/results.json) |
-| [Post-OCR table reconstruction](systems/table_extractor/README.md) | Cluster OCR line bounding boxes into rows and columns to rebuild a simple table grid. | Basic Python and coordinate geometry intuition. | [2 cases](systems/table_extractor/eval/results.json) |
-| [Image caption QC](systems/caption_qc/README.md) | Run rule-based checks on autogenerated image captions: placeholders, length, and required keywords. | Basic Python and string checks. | [5 cases](systems/caption_qc/eval/results.json) |
-| [RAG citation support checker](systems/citation_checker/README.md) | Verify that inline citations in a generated answer are lexically supported by the cited chunk. | Basic Python and lexical overlap concepts. | [4 cases](systems/citation_checker/eval/results.json) |
-| [Schema drift detector](systems/schema_drift_detector/README.md) | Diff a batch of records against a declared schema: new fields, missing fields, and type mismatches. | Python dictionaries and basic data typing. | [2 cases](systems/schema_drift_detector/eval/results.json) |
+| System | Eval cases |
+|:--|--:|
+| [Post-OCR document extraction](systems/multimodal_ocr/README.md) | [3](systems/multimodal_ocr/eval/results.json) |
+| [Entity spans and error analysis](systems/entity_extraction/README.md) | [4](systems/entity_extraction/eval/results.json) |
+| [Exact-response cache](systems/semantic_cache/README.md) | [4](systems/semantic_cache/eval/results.json) |
+| [Synonym query rewriter](systems/query_rewriter/README.md) | [4](systems/query_rewriter/eval/results.json) |
+| [Prompt-injection pattern scanner](systems/prompt_injection_detector/README.md) | [6](systems/prompt_injection_detector/eval/results.json) |
+| [Cost and latency guardrail tracker](systems/cost_latency_tracker/README.md) | [3](systems/cost_latency_tracker/eval/results.json) |
+| [Post-OCR table reconstruction](systems/table_extractor/README.md) | [2](systems/table_extractor/eval/results.json) |
+| [Image caption QC](systems/caption_qc/README.md) | [5](systems/caption_qc/eval/results.json) |
+| [RAG citation support checker](systems/citation_checker/README.md) | [4](systems/citation_checker/eval/results.json) |
+| [Schema drift detector](systems/schema_drift_detector/README.md) | [2](systems/schema_drift_detector/eval/results.json) |
 
-#### Advanced
+### Advanced
 
-For builders ready to reason about agent boundaries, protocols, and evaluation quality.
+A compact directory of projects by level. Read a system guide for its focus and prerequisites.
 
-| System | What it demonstrates | Useful background | Evaluation |
-|:--|:--|:--|--:|
-| [Voice-agent transcript evaluator](systems/voice_eval/README.md) | Score call success, forbidden actions, and latency separately. | Structured transcripts and evaluation rubrics. | [3 cases](systems/voice_eval/eval/results.json) |
-| [Judge agreement audit](systems/judge_audit/README.md) | Compare a heuristic with human ratings and inspect rater disagreement. | Classification metrics and labeled data. | [6 cases](systems/judge_audit/eval/results.json) |
-| [Approval-gated tool workflow](systems/bounded_agent/README.md) | Constrain tools with an allow-list and require approval before sensitive actions. | Python functions, tools/APIs, and authorization concepts. | [3 cases](systems/bounded_agent/eval/results.json) |
-| [Local knowledge-base MCP server](systems/mcp_kb/README.md) | Expose local search and source reads as JSON-RPC-style tools. | Python, JSON-RPC, and client/server concepts. | [4 cases](systems/mcp_kb/eval/results.json) |
-| [Multi-agent triage handoff](systems/multi_agent_handoff/README.md) | Route a request through a triage step to the right specialist, escalating when confidence is low. | Agent orchestration and escalation design. | [4 cases](systems/multi_agent_handoff/eval/results.json) |
-| [Retrieval evaluation harness](systems/retrieval_eval_harness/README.md) | Score retrieval with recall@k, MRR, and nDCG@k, and compare two strategies side by side. | IR evaluation metrics (recall, MRR, nDCG). | [4 cases](systems/retrieval_eval_harness/eval/results.json) |
-| [Canary rollout simulator](systems/canary_rollout_simulator/README.md) | Compare canary metrics against a baseline to decide promote or rollback. | Deployment guardrails and basic statistics caveats. | [3 cases](systems/canary_rollout_simulator/eval/results.json) |
-| [Adversarial red-team harness](systems/redteam_harness/README.md) | Run adversarial requests against a bounded agent's policy and measure the breach rate. | Agent authorization boundaries and adversarial thinking. | [5 cases](systems/redteam_harness/eval/results.json) |
-| [Trace anomaly detector](systems/trace_anomaly_detector/README.md) | Flag anomalous execution-trace durations with a z-score against a historical baseline. | Basic statistics (mean, standard deviation, z-scores). | [4 cases](systems/trace_anomaly_detector/eval/results.json) |
-| [Multi-hop reasoning router](systems/multi_hop_router/README.md) | Split a multi-part question into sub-questions and abstain unless every part is answered. | Retrieval-augmented QA and question decomposition. | [3 cases](systems/multi_hop_router/eval/results.json) |
+| System | Eval cases |
+|:--|--:|
+| [Voice-agent transcript evaluator](systems/voice_eval/README.md) | [3](systems/voice_eval/eval/results.json) |
+| [Judge agreement audit](systems/judge_audit/README.md) | [6](systems/judge_audit/eval/results.json) |
+| [Approval-gated tool workflow](systems/bounded_agent/README.md) | [3](systems/bounded_agent/eval/results.json) |
+| [Local knowledge-base MCP server](systems/mcp_kb/README.md) | [4](systems/mcp_kb/eval/results.json) |
+| [Multi-agent triage handoff](systems/multi_agent_handoff/README.md) | [4](systems/multi_agent_handoff/eval/results.json) |
+| [Retrieval evaluation harness](systems/retrieval_eval_harness/README.md) | [4](systems/retrieval_eval_harness/eval/results.json) |
+| [Canary rollout simulator](systems/canary_rollout_simulator/README.md) | [3](systems/canary_rollout_simulator/eval/results.json) |
+| [Adversarial red-team harness](systems/redteam_harness/README.md) | [5](systems/redteam_harness/eval/results.json) |
+| [Trace anomaly detector](systems/trace_anomaly_detector/README.md) | [4](systems/trace_anomaly_detector/eval/results.json) |
+| [Multi-hop reasoning router](systems/multi_hop_router/README.md) | [3](systems/multi_hop_router/eval/results.json) |
 <!-- SYSTEMS:END -->
 
 The project index is grouped by experience level; the next sections are optional deep dives.
