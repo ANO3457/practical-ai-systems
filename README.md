@@ -401,11 +401,15 @@ Treat examples as design patterns, not production services. Review data handling
 
 ## Contribute
 
-Contributions of every size are welcome, from a typo fix to a whole new system. Every rule is checked automatically with a fix-it hint.
+Contributions of every size are welcome—from a typo fix to a complete new system.
+You do not need permission to propose an idea or open a pull request. **Nothing
+merges without maintainer approval:** a pull request is a proposal, not a promise
+of acceptance, and the maintainer reviews and approves every contributor PR.
+This keeps the project open to ideas while the quality bar stays deliberate.
 
 ```bash
 make check                                   # run everything CI runs
-make new SYSTEM=my_system                    # scaffold a new system that passes CI out of the box
+make new SYSTEM=my_system                    # scaffold a new system with Python, web app, tests, and npm lockfile
 make test SYSTEM=doc_qa                      # test one system
 make eval SYSTEM=doc_qa                      # regenerate its eval/results.json
 make serve SYSTEM=doc_qa                     # open its web app at http://localhost:4173
@@ -413,9 +417,9 @@ make serve SYSTEM=doc_qa                     # open its web app at http://localh
 
 - **5 minutes:** fix a README or [report a failing case](https://github.com/shivamnegi92/practical-ai-systems/issues/new?template=failing-case.yml).
 - **30 minutes:** add eval cases that break a system, or improve a web app.
-- **A few hours:** add a new system with [`docs/ADDING_A_SYSTEM.md`](docs/ADDING_A_SYSTEM.md).
+- **A few hours:** propose a new system with [`docs/ADDING_A_SYSTEM.md`](docs/ADDING_A_SYSTEM.md). Scope requests are welcome before implementation.
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Look for [`good first issue`](https://github.com/shivamnegi92/practical-ai-systems/labels/good%20first%20issue).
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Find [good first issues](https://github.com/shivamnegi92/practical-ai-systems/labels/good%20first%20issue) or [help-wanted tasks](https://github.com/shivamnegi92/practical-ai-systems/labels/help%20wanted). You may open a PR directly; opening or claiming an issue first is encouraged to avoid duplicate effort, not required for small changes. The maintainer makes the final merge decision.
 
 ## More resources
 

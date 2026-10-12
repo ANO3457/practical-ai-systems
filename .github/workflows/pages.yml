@@ -28,7 +28,7 @@ jobs:
       - name: Build every web app
         run: |
           for d in systems/*/web; do
-            (cd "$d" && npm install --no-audit --no-fund --silent && npm run build --silent)
+            (cd "$d" && npm ci --no-audit --no-fund --silent && npm run build --silent)
           done
       - name: Assemble gallery
         run: python scripts/build_site.py --out site

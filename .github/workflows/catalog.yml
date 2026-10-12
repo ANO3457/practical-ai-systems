@@ -28,6 +28,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Contribution contract (structure, standalone imports, placeholders)
         run: python scripts/check_systems.py
+      - name: Check reproducible npm dependency locks
+        run: python scripts/check_web_lockfiles.py
       - name: Validate records and generated views
         run: python scripts/build_catalog.py
       - name: Shared, system, repository, and example tests
@@ -54,6 +56,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/labeler.yml
+          sync-labels: false
       - id: find
         name: List web apps to test
         run: |
@@ -85,5 +92,28 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
       - run: npm test
+
+  required:
+    name: Required checks
+    needs: [python, changes, web]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all applicable validation jobs
+        env:
+          PYTHON_RESULT: ${{ needs.python.result }}
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          WEB_RESULT: ${{ needs.web.result }}
+          CHANGED_SYSTEMS: ${{ needs.changes.outputs.systems }}
+        run: |
+          if [ "$PYTHON_RESULT" != "success" ] || [ "$CHANGES_RESULT" != "success" ]; then
+            echo "Python or changed-web-app detection did not succeed."
+            exit 1
+          fi
+          if [ "$CHANGED_SYSTEMS" != "[]" ] && [ "$WEB_RESULT" != "success" ]; then
+            echo "A changed web app did not build and pass tests."
+            exit 1
+          fi
+          echo "All applicable checks passed."

@@ -7,6 +7,7 @@ from pathlib import Path
 from scripts.check_systems import check_all, check_system
 from scripts.new_system import scaffold
 from scripts.registry import load_manifests
+from scripts.check_web_lockfiles import main as check_web_lockfiles
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -25,6 +26,10 @@ class ContributionContractTests(unittest.TestCase):
 
     def test_repository_systems_pass_contract(self):
         self.assertEqual(check_all(), [])
+
+    def test_repository_web_lockfiles_pass(self):
+        self.assertEqual(check_web_lockfiles(), 0)
+
 
     def test_scaffold_creates_manifest_discovered_by_registry(self):
         self._scaffold()
