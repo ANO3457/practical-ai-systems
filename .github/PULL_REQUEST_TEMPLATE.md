@@ -1,6 +1,9 @@
 ## What changed and why?
 
-<!-- One or two sentences. Link the issue: "Closes #123". -->
+<!-- One or two sentences. Link the issue if there is one; an issue is optional for small changes. -->
+
+**Maintainer review is required before merge.** Passing CI does not guarantee acceptance.
+
 
 ## Type
 - [ ] Docs / typo
@@ -17,3 +20,5 @@
 - [ ] Synthetic or clearly licensed data only; no secrets, personal, or employer-confidential material
 - [ ] `eval/results.json` regenerated (`make eval`) and result claims match the measured scope
 - [ ] Known limitations updated if I found or introduced a failure mode
+- [ ] No generated `node_modules/` or build output is included
+- [ ] Web `package.json` changes include matching lockfile changes

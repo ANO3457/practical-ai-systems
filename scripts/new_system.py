@@ -77,7 +77,7 @@ def main() -> int:
     print(f"  2. python3 -m unittest discover -s {rel} -t . -v")
     print(f"  3. python3 scripts/evaluate_systems.py --check --write --only {args.name}")
     print(f"  4. python3 scripts/render_systems.py --write && python3 scripts/check_systems.py")
-    print(f"  5. cd {rel}/web && npm install && npm test")
+    print(f"  5. cd {rel}/web && npm ci && npm test")
     return 0
 
 

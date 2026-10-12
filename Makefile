@@ -2,13 +2,16 @@
 PY ?= python3
 SYSTEM ?=
 
-.PHONY: help check test eval readme web-test new serve clean
+.PHONY: help check test eval readme web-test new serve clean FORCE
+
+FORCE:
 
 help: ## Show available commands
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*## "}{printf "  make %-10s %s\n", $$1, $$2}'
 
-check: ## Run everything CI runs (except web tests)
+check: FORCE ## Run everything CI runs (except web tests)
 	$(PY) scripts/check_systems.py
+	$(PY) scripts/check_web_lockfiles.py
 	$(PY) scripts/build_catalog.py
 	$(PY) -m unittest discover -s common -t .
 	$(PY) -m unittest discover -s systems -p 'test_*.py'
@@ -33,12 +36,12 @@ readme: ## Regenerate the README project index from system.json manifests
 
 web-test: ## Build + test web apps: make web-test SYSTEM=doc_qa (or all)
 	@for d in $(if $(SYSTEM),systems/$(SYSTEM)/web,systems/*/web); do \
-		echo "== $$d"; (cd $$d && npm install --silent --no-audit --no-fund && npm test --silent) || exit 1; \
+		echo "== $$d"; (cd $$d && npm ci --silent --no-audit --no-fund && npm test --silent) || exit 1; \
 	done
 
 serve: ## Run one web app: make serve SYSTEM=doc_qa
 	@test -n "$(SYSTEM)" || (echo "usage: make serve SYSTEM=<name>" && exit 1)
-	cd systems/$(SYSTEM)/web && npm install --silent && npm start
+	cd systems/$(SYSTEM)/web && npm ci --silent && npm start
 
 new: ## Scaffold a system: make new SYSTEM=my_system (prompts are flags, see scripts/new_system.py)
 	@test -n "$(SYSTEM)" || (echo "usage: make new SYSTEM=<snake_case_name>" && exit 1)

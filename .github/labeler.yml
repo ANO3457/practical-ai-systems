@@ -1,0 +1,22 @@
+"web-app":
+  - changed-files:
+      - any-glob-to-any-file: "systems/**/web/**"
+"evaluation":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "systems/**/eval/**"
+          - "systems/**/evaluate.py"
+"documentation":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+"new-system":
+  - changed-files:
+      - any-glob-to-any-file: "systems/*/system.json"
+"tooling":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "scripts/**"
+          - "templates/**"
+          - ".github/workflows/**"
+          - "Makefile"

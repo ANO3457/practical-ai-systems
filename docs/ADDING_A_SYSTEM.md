@@ -1,6 +1,6 @@
 # Adding a new system
 
-This walkthrough takes a new system from idea to merged PR. Budget 1–3 hours. Open a **System request** issue first so scope is agreed before you build.
+This walkthrough takes a new system from idea to reviewed PR. Budget 1–3 hours. A **System request** issue is the best way to agree on scope before building; maintainer review is required before any PR merges. Small fixes and eval contributions can go straight to a PR.
 
 ## 1. Pick a good system
 
