@@ -28,6 +28,9 @@ export function scoreTurns(turns: Turn[], requiredActions: string[], forbiddenAc
   const latency = turns
     .filter((t): t is Turn & { latency_ms: number } => t.speaker === "agent" && t.latency_ms !== undefined)
     .map((t) => t.latency_ms);
+  if (latency.some((v) => typeof v !== "number" || !Number.isFinite(v) || v < 0)) {
+    throw new Error("agent latency_ms must be a finite non-negative number");
+  }
   const sortedLatency = [...latency].sort((a, b) => a - b);
   return {
     task_success: missing.length === 0,
