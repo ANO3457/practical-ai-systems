@@ -28,15 +28,24 @@ def main(root: Path = ROOT) -> int:
         except (OSError, json.JSONDecodeError) as exc:
             errors.append(f"{relative.parent}: cannot read package manifest/lock: {exc}")
             continue
-        if lock.get("lockfileVersion", 0) < 2:
-            errors.append(f"{relative.parent}: package-lock.json must use lockfileVersion 2 or newer")
-        root_package = lock.get("packages", {}).get("")
-        if root_package is None:
-            errors.append(f"{relative.parent}: package-lock.json has no root package record; regenerate it")
+        if not isinstance(package, dict) or not isinstance(lock, dict):
+            errors.append(f"{relative.parent}: package manifest and lock must be JSON objects")
             continue
+        version = lock.get("lockfileVersion", 0)
+        if isinstance(version, bool) or not isinstance(version, int) or version < 2:
+            errors.append(f"{relative.parent}: package-lock.json must use lockfileVersion 2 or newer")
+            continue
+        lock_packages = lock.get("packages")
+        if not isinstance(lock_packages, dict) or not isinstance(lock_packages.get(""), dict):
+            errors.append(f"{relative.parent}: package-lock.json needs an object root package record; regenerate it")
+            continue
+        root_package = lock_packages[""]
         for section in ("dependencies", "devDependencies", "optionalDependencies"):
             expected = package.get(section, {})
             actual = root_package.get(section, {})
+            if not isinstance(expected, dict) or not isinstance(actual, dict):
+                errors.append(f"{relative.parent}: {section} must be an object in both package manifest and lock")
+                continue
             if expected != actual:
                 errors.append(f"{relative.parent}: package-lock.json {section} do not match package.json; run npm install --package-lock-only")
     if errors:
