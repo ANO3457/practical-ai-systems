@@ -56,6 +56,7 @@ export class BM25 {
   }
 
   search(query: string, k = 5): Array<[string, number]> {
+    if (k <= 0) return [];
     const scored: Array<[string, number]> = Object.keys(this.tokens).map((id) => [id, this.score(query, id)]);
     return scored
       .filter(([, s]) => s > 0)

@@ -1,6 +1,6 @@
 import unittest
 
-from systems.doc_qa.app import DocQA, StubLLM, load_chunks
+from systems.doc_qa.app import BM25, DocQA, StubLLM, load_chunks
 from systems.doc_qa.evaluate import evaluate
 
 
@@ -42,6 +42,10 @@ class DocQATests(unittest.TestCase):
         self.assertGreaterEqual(metrics["recall_at_3"], 0.8)
         for value in metrics.values():
             self.assertTrue(0 <= value <= 1)
+
+    def test_bm25_search_handles_nonpositive_k(self):
+        self.assertEqual(self.qa.index.search("plan cost", k=0), [])
+        self.assertEqual(self.qa.index.search("plan cost", k=-1), [])
 
 
 if __name__ == "__main__":
