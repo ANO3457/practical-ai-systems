@@ -42,7 +42,7 @@ class BoundedAgent:
             raise ValueError("action is not allow-listed")
         if not isinstance(plan.arguments, dict):
             raise ValueError("arguments must be an object")
-        if plan.requires_approval and not approved:
+        if plan.requires_approval and approved is not True:
             return {"status": "awaiting_approval", "action": plan.action}
         return {"status": "completed", "action": plan.action, "result": self.tools[plan.action](**plan.arguments)}
 
@@ -73,7 +73,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("cases_file", type=Path)
     args = parser.parse_args()
-    cases = json.loads(args.cases_file.read_text())
+    cases = json.loads(args.cases_file.read_text(encoding="utf-8"))
     print(json.dumps(run_battery(build_agent(), cases), indent=2))
 
 
