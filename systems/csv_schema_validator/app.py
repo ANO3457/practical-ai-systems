@@ -36,8 +36,8 @@ def main() -> None:
     parser.add_argument("schema_file", type=Path)
     parser.add_argument("rows_file", type=Path)
     args = parser.parse_args()
-    schema = json.loads(args.schema_file.read_text())
-    rows = json.loads(args.rows_file.read_text())
+    schema = json.loads(args.schema_file.read_text(encoding="utf-8"))
+    rows = json.loads(args.rows_file.read_text(encoding="utf-8"))
     print(json.dumps(validate_rows(schema, rows), indent=2))
 
 
