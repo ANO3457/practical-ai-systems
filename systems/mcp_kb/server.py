@@ -120,6 +120,7 @@ def dispatch(message: dict, tools: KnowledgeTools) -> dict:
     method = message.get("method")
     params = message.get("params", {})
     request_id = message.get("id")
+    notification = isinstance(method, str) and bool(method) and "id" not in message
     if method == "initialize":
         result = {
             "protocolVersion": "2024-11-05",
@@ -133,7 +134,11 @@ def dispatch(message: dict, tools: KnowledgeTools) -> dict:
     elif method == "tools/call":
         result = _call_tool(params, tools)
     else:
+        if notification:
+            return {}
         return {"jsonrpc": "2.0", "id": request_id, "error": {"code": -32601, "message": "method not found"}}
+    if notification:
+        return {}
     return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
 

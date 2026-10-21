@@ -95,6 +95,7 @@ function callTool(params: { name?: string; arguments?: Record<string, unknown> }
 
 export function dispatch(message: { method?: string; params?: Record<string, unknown>; id?: unknown }, tools: KnowledgeTools) {
   const { method, params = {}, id } = message;
+  const notification = typeof method === "string" && method.length > 0 && !Object.prototype.hasOwnProperty.call(message, "id");
   let result: unknown;
   if (method === "initialize") {
     result = { protocolVersion: "2024-11-05", capabilities: { tools: {} }, serverInfo: { name: "local-knowledge-base", version: "0.1.0" } };
@@ -105,8 +106,10 @@ export function dispatch(message: { method?: string; params?: Record<string, unk
   } else if (method === "tools/call") {
     result = callTool(params as { name?: string; arguments?: Record<string, unknown> }, tools);
   } else {
+    if (notification) return {};
     return { jsonrpc: "2.0", id, error: { code: -32601, message: "method not found" } };
   }
+  if (notification) return {};
   return { jsonrpc: "2.0", id, result };
 }
 
