@@ -7,6 +7,22 @@ from scripts.new_system import render, scaffold
 
 
 class LiteralMetadata(unittest.TestCase):
+    def test_unicode_line_separators_stay_inside_the_typescript_comment(self):
+        title = "Demo\u2028const accidental = true;\u2029tail"
+        with tempfile.TemporaryDirectory() as tmp:
+            target = scaffold("unicode_demo", title, "Beginner", "A demo", "Python", root=Path(tmp))
+            header = (target / "web/src/app.ts").read_text(encoding="utf-8").splitlines()[0]
+            self.assertIn("accidental", header)
+            self.assertIn("tail", header)
+            self.assertEqual(json.loads((target / "system.json").read_text())["title"], title)
+
+    def test_control_characters_do_not_make_generated_python_unparseable(self):
+        title = "Demo\x00title"
+        with tempfile.TemporaryDirectory() as tmp:
+            target = scaffold("control_demo", title, "Beginner", "A demo", "Python", root=Path(tmp))
+            source = (target / "app.py").read_text(encoding="utf-8")
+            self.assertIn(title, ast.get_docstring(ast.parse(source)))
+
     def test_replacement_values_are_not_recursively_interpreted(self):
         self.assertEqual(render("{{title}} / {{hook}}", {"title": "{{hook}}", "hook": "Guide"}), "{{hook}} / Guide")
         self.assertEqual(render("{{unknown}}", {"title": "Demo"}), "{{unknown}}")

@@ -57,9 +57,9 @@ def scaffold(name: str, title: str, level: str, hook: str, prerequisites: str, r
             if dest.suffix == ".html":
                 value = html.escape(value)
             elif dest.suffix == ".py":
-                value = value.replace("\\", "\\\\").replace('"""', '\\"\\"\\"')
+                value = value.encode("unicode_escape").decode("ascii").replace('"""', '\\"\\"\\"')
             elif dest.suffix == ".ts":
-                value = value.replace("\r", " ").replace("\n", " ")
+                value = " ".join(value.splitlines())
             content_values[key] = value
         dest.write_text(render(src.read_text(encoding="utf-8"), content_values), encoding="utf-8")
     manifest = {"title": title, "level": level, "order": max(same_level, default=0) + 1,
