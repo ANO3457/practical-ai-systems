@@ -36,15 +36,22 @@ const SPECIALISTS: Record<string, () => Record<string, string>> = {
 export function triage(text: string): [string | null, number] {
   const tokens = new Set(tokenize(text));
   let bestCategory: string | null = null;
-  let bestScore = -1;
+  let bestScore = 0;
+  let isTie = false;
   for (const [category, keywords] of Object.entries(CATEGORIES)) {
     const score = [...tokens].filter((t) => keywords.has(t)).length;
     if (score > bestScore) {
       bestScore = score;
       bestCategory = category;
+      isTie = false;
+    } else if (score === bestScore && score > 0) {
+      isTie = true;
     }
   }
-  return bestScore > 0 ? [bestCategory, bestScore] : [null, 0];
+  if (isTie || bestScore === 0) {
+    return [null, bestScore];
+  }
+  return [bestCategory, bestScore];
 }
 
 export function handle(request: { text: string }) {

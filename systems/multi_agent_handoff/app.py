@@ -43,9 +43,13 @@ SPECIALISTS = {
 def triage(text: str) -> tuple[str | None, int]:
     tokens = set(tokenize(text))
     scores = {category: len(tokens & keywords) for category, keywords in CATEGORIES.items()}
-    best_category = max(scores, key=scores.get)
-    best_score = scores[best_category]
-    return (best_category, best_score) if best_score else (None, 0)
+    best_score = max(scores.values(), default=0)
+    if best_score == 0:
+        return (None, 0)
+    top_categories = [category for category, score in scores.items() if score == best_score]
+    if len(top_categories) > 1:
+        return (None, best_score)
+    return (top_categories[0], best_score)
 
 
 def handle(request: dict) -> dict:

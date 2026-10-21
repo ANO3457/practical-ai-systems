@@ -24,6 +24,11 @@ class MultiAgentHandoffTests(unittest.TestCase):
         self.assertEqual(result["status"], "escalated")
         self.assertEqual(result["category"], "technical")
 
+    def test_escalates_when_top_categories_tie(self):
+        result = handle({"text": "There is an invoice charge and also a login error."})
+        self.assertEqual(result["status"], "escalated")
+        self.assertIsNone(result["category"])
+
 
 if __name__ == "__main__":
     unittest.main()
