@@ -1,5 +1,7 @@
 # Practical AI Systems
 
+[**English**](README.md) | [简体中文](README.zh-CN.md)
+
 <p align="center">
   <strong>Build small AI systems. Test what they get wrong.</strong><br />
   30 offline-first projects with runnable code, tests, synthetic evaluations, and candid limitations.
@@ -202,6 +204,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUC
 - [Curated toolbox](catalog/README.md) — reviewed external projects by capability.
 - [Recipes](recipes/) — original field guides for common workflows.
 - [Evaluation playbook](benchmarks/README.md) — design representative tests and interpret results.
+- [Voice Agent Evaluation Corpus + TRG](https://github.com/shivamnegi92/voice-agent-eval-corpus) — a companion corpus and reporting/validation toolkit focused on real-time voice-agent evaluation.
 - [Changelog](CHANGELOG.md) — recent project updates.
 
 ## License
