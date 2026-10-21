@@ -26,7 +26,13 @@ export function scoreTurns(turns: Turn[], requiredActions: string[], forbiddenAc
     .map((a) => a.toLowerCase());
   const violations = forbiddenActions.filter((a) => actions.includes(a.toLowerCase()));
   const latency = turns
-    .filter((t): t is Turn & { latency_ms: number } => t.speaker === "agent" && t.latency_ms !== undefined)
+    .filter(
+      (t): t is Turn & { latency_ms: number } =>
+        t.speaker === "agent" &&
+        typeof t.latency_ms === "number" &&
+        Number.isFinite(t.latency_ms) &&
+        t.latency_ms >= 0
+    )
     .map((t) => t.latency_ms);
   const sortedLatency = [...latency].sort((a, b) => a - b);
   return {
