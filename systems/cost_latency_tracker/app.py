@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 
 def percentile(values, pct: float) -> float:
+    if pct < 0 or pct > 100:
+        raise ValueError('pct must be between 0 and 100')
     ordered = sorted(values)
     if not ordered:
         return 0.0
