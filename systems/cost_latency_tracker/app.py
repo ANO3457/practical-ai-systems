@@ -40,7 +40,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("log_file", type=Path)
     args = parser.parse_args()
-    requests = json.loads(args.log_file.read_text())
+    requests = json.loads(args.log_file.read_text(encoding="utf-8"))
     print(json.dumps(summarize(requests), indent=2))
 
 
