@@ -17,7 +17,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.registry import REQUIRED_KEYS, load_manifests  # noqa: E402
 
-NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+NAME_RE = re.compile(r"^[a-z][a-z0-9_]*\Z")
 REQUIRED_FILES = ("__init__.py", "README.md", "system.json", "evaluate.py", "eval/cases.json", "eval/results.json")
 REQUIRED_WEB_FILES = ("package.json", "tsconfig.json", "index.html", "serve.mjs", "src/app.ts", "src/app.test.ts", "src/main.ts")
 README_SECTIONS = ("## Quickstart", "## Known limitations")
