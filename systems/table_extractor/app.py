@@ -8,6 +8,8 @@ Standalone: zero imports outside the Python standard library.
 """
 from __future__ import annotations
 
+import math
+
 
 def normalize_lines(lines: list[dict]) -> list[dict]:
     """Keep only well-formed {text, bbox} records, sorted reading-order (top-to-bottom, left-to-right)."""
@@ -18,7 +20,11 @@ def normalize_lines(lines: list[dict]) -> list[dict]:
         if not text or not isinstance(box, list) or len(box) != 4:
             continue
         x1, y1, x2, y2 = box
-        if not all(isinstance(v, (int, float)) for v in box) or x2 < x1 or y2 < y1:
+        if (
+            not all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) for v in box)
+            or x2 < x1
+            or y2 < y1
+        ):
             continue
         out.append({"text": text, "bbox": [float(x1), float(y1), float(x2), float(y2)]})
     return sorted(out, key=lambda x: (round(x["bbox"][1], 3), x["bbox"][0]))
@@ -36,6 +42,10 @@ def _cluster(values: list[float], gap: float) -> list[list[int]]:
 
 
 def extract_table(lines: list[dict], row_gap: float = 5.0, col_gap: float = 40.0) -> list[list[str]]:
+    if row_gap < 0:
+        raise ValueError("row_gap must be non-negative")
+    if col_gap < 0:
+        raise ValueError("col_gap must be non-negative")
     normalized = normalize_lines(lines)
     if not normalized:
         return []

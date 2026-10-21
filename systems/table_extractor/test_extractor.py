@@ -1,6 +1,7 @@
+import math
 import unittest
 
-from systems.table_extractor.app import extract_table
+from systems.table_extractor.app import extract_table, normalize_lines
 
 
 class TableExtractorTests(unittest.TestCase):
@@ -27,6 +28,25 @@ class TableExtractorTests(unittest.TestCase):
 
     def test_empty_input_returns_empty_grid(self):
         self.assertEqual(extract_table([]), [])
+
+    def test_normalize_lines_filters_invalid_and_nonfinite_boxes(self):
+        invalid_lines = [
+            {"text": "Inverted X", "bbox": [50, 0, 20, 10]},
+            {"text": "Inverted Y", "bbox": [0, 20, 10, 10]},
+            {"text": "NaN coords", "bbox": [float("nan"), 0, 10, 10]},
+            {"text": "Inf coords", "bbox": [0, float("inf"), 10, 20]},
+            {"text": "Bool coords", "bbox": [True, False, 10, 20]},
+            {"text": "Valid", "bbox": [0, 0, 10, 10]},
+        ]
+        normalized = normalize_lines(invalid_lines)
+        self.assertEqual(len(normalized), 1)
+        self.assertEqual(normalized[0]["text"], "Valid")
+
+    def test_negative_gap_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            extract_table([], row_gap=-1.0)
+        with self.assertRaises(ValueError):
+            extract_table([], col_gap=-5.0)
 
 
 if __name__ == "__main__":
