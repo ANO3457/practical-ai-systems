@@ -6,6 +6,7 @@ prints a fix-it hint so first-time contributors know exactly what to change.
 from __future__ import annotations
 
 import ast
+from importlib.util import resolve_name
 import json
 import re
 import sys
@@ -25,14 +26,24 @@ PLACEHOLDERS = ("TODO", "replace before submitting", "Placeholder logic")
 STDLIB = set(sys.stdlib_module_names)
 
 
-def _imports(path: Path) -> set[str]:
+def _imports(path: Path, package: str = "") -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     found = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             found.update(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
-            found.add(node.module)
+        elif isinstance(node, ast.ImportFrom):
+            module = node.module or ""
+            if node.level:
+                try:
+                    module = resolve_name("." * node.level + module, package)
+                except (ImportError, ValueError):
+                    found.add("<invalid-relative-import>")
+                    continue
+            if module == "systems":
+                found.update(f"systems.{alias.name}" for alias in node.names)
+            elif module:
+                found.add(module)
     return found
 
 
@@ -68,9 +79,10 @@ def check_system(folder: Path) -> list[str]:
     for py in folder.rglob("*.py"):
         if "node_modules" in py.parts:
             continue
-        for module in _imports(py):
+        package = ".".join(py.relative_to(folder.parent.parent).parts[:-1])
+        for module in _imports(py, package):
             top = module.split(".")[0]
-            if top == "systems" and not module.startswith(f"systems.{name}"):
+            if top == "systems" and not (module == f"systems.{name}" or module.startswith(f"systems.{name}.")):
                 errors.append(f"{name}: {py.relative_to(folder)} imports {module}; systems must be standalone (copy the helper instead)")
             elif top == "common":
                 errors.append(f"{name}: {py.relative_to(folder)} imports {module}; inline the helper so the system stays standalone")
