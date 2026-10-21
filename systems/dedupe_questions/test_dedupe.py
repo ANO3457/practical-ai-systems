@@ -19,6 +19,16 @@ class DedupeTests(unittest.TestCase):
         pairs = find_duplicates(["Reset my password", "Please reset my password", "Where is my order?"])
         self.assertIn((0, 1), [(i, j) for i, j, _ in pairs])
 
+    def test_find_duplicates_validates_threshold(self):
+        with self.assertRaises(ValueError):
+            find_duplicates(["a", "b"], threshold=-0.1)
+        with self.assertRaises(ValueError):
+            find_duplicates(["a", "b"], threshold=1.5)
+        with self.assertRaises(ValueError):
+            find_duplicates(["a", "b"], threshold=float("nan"))
+        with self.assertRaises(ValueError):
+            find_duplicates(["a", "b"], threshold=True)
+
 
 if __name__ == "__main__":
     unittest.main()

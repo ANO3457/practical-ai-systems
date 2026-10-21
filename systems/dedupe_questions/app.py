@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 from itertools import combinations
-
+import math
 import re
 
 _STOPWORDS = frozenset(
@@ -35,6 +35,13 @@ def similarity(a: str, b: str) -> float:
 
 def find_duplicates(questions: list[str], threshold: float = 0.6) -> list[tuple[int, int, float]]:
     """Return (i, j, score) for every pair at or above the similarity threshold."""
+    if (
+        not isinstance(threshold, (int, float))
+        or isinstance(threshold, bool)
+        or not math.isfinite(threshold)
+        or not (0.0 <= threshold <= 1.0)
+    ):
+        raise ValueError("threshold must be a float between 0.0 and 1.0")
     pairs = []
     for i, j in combinations(range(len(questions)), 2):
         score = similarity(questions[i], questions[j])

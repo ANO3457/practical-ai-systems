@@ -32,6 +32,9 @@ export function similarity(a: string, b: string): number {
 }
 
 export function findDuplicates(questions: string[], threshold = 0.6): Array<[number, number, number]> {
+  if (typeof threshold !== "number" || !Number.isFinite(threshold) || threshold < 0 || threshold > 1) {
+    throw new RangeError("threshold must be between 0.0 and 1.0");
+  }
   const pairs: Array<[number, number, number]> = [];
   for (let i = 0; i < questions.length; i++) {
     for (let j = i + 1; j < questions.length; j++) {
