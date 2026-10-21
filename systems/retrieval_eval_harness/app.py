@@ -53,6 +53,8 @@ class BM25:
         )
 
     def search(self, query: str, k: int = 5) -> list[tuple[str, float]]:
+        if k <= 0:
+            return []
         scored = ((doc_id, self.score(query, doc_id)) for doc_id in self.tokens)
         hits = sorted((h for h in scored if h[1] > 0), key=lambda h: (-h[1], h[0]))
         return hits[:k]
@@ -74,7 +76,7 @@ def expand_query(query: str) -> str:
 
 
 def recall_at_k(ranked_ids: list[str], relevant_ids: set[str], k: int) -> float:
-    if not relevant_ids:
+    if not relevant_ids or k <= 0:
         return 0.0
     return len(set(ranked_ids[:k]) & relevant_ids) / len(relevant_ids)
 
@@ -87,6 +89,8 @@ def reciprocal_rank(ranked_ids: list[str], relevant_ids: set[str]) -> float:
 
 
 def ndcg_at_k(ranked_ids: list[str], relevance: dict[str, int], k: int) -> float:
+    if k <= 0:
+        return 0.0
     dcg = sum(relevance.get(doc_id, 0) / math.log2(i + 1) for i, doc_id in enumerate(ranked_ids[:k], start=1))
     ideal = sorted(relevance.values(), reverse=True)[:k]
     idcg = sum(rel / math.log2(i + 1) for i, rel in enumerate(ideal, start=1))

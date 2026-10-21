@@ -49,6 +49,7 @@ export class BM25 {
   }
 
   search(query: string, k = 5): Array<[string, number]> {
+    if (k <= 0) return [];
     const scored: Array<[string, number]> = Object.keys(this.tokens).map((id) => [id, this.score(query, id)]);
     return scored.filter(([, s]) => s > 0).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, k);
   }
@@ -64,7 +65,7 @@ export function expandQuery(query: string): string {
 }
 
 export function recallAtK(rankedIds: string[], relevantIds: Set<string>, k: number): number {
-  if (relevantIds.size === 0) return 0;
+  if (relevantIds.size === 0 || k <= 0) return 0;
   const top = new Set(rankedIds.slice(0, k));
   return [...top].filter((id) => relevantIds.has(id)).length / relevantIds.size;
 }
@@ -75,6 +76,7 @@ export function reciprocalRank(rankedIds: string[], relevantIds: Set<string>): n
 }
 
 export function ndcgAtK(rankedIds: string[], relevance: Record<string, number>, k: number): number {
+  if (k <= 0) return 0;
   const dcg = rankedIds.slice(0, k).reduce((sum, id, i) => sum + (relevance[id] ?? 0) / Math.log2(i + 2), 0);
   const ideal = Object.values(relevance).sort((a, b) => b - a).slice(0, k);
   const idcg = ideal.reduce((sum, rel, i) => sum + rel / Math.log2(i + 2), 0);
