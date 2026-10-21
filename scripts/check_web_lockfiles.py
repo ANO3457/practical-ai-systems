@@ -25,7 +25,7 @@ def main(root: Path = ROOT) -> int:
         try:
             package = json.loads(package_path.read_text(encoding="utf-8"))
             lock = json.loads(lock_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             errors.append(f"{relative.parent}: cannot read package manifest/lock: {exc}")
             continue
         if not isinstance(package, dict) or not isinstance(lock, dict):

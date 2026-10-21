@@ -9,6 +9,20 @@ from scripts.check_web_lockfiles import main
 
 
 class InvalidLockShapes(unittest.TestCase):
+    def test_invalid_utf8_is_a_diagnostic(self):
+        for broken in ['package.json', 'package-lock.json']:
+            with self.subTest(broken=broken), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                web = root / 'systems/demo/web'
+                web.mkdir(parents=True)
+                (web / 'package.json').write_text('{}', encoding='utf-8')
+                (web / 'package-lock.json').write_text(json.dumps({'lockfileVersion': 3, 'packages': {'': {}}}), encoding='utf-8')
+                (web / broken).write_bytes(b'\xff')
+                stderr = io.StringIO()
+                with contextlib.redirect_stderr(stderr):
+                    self.assertEqual(main(root), 1)
+                self.assertIn('cannot read', stderr.getvalue())
+
     def check_pair(self, package, lock):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
