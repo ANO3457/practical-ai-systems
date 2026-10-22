@@ -38,8 +38,8 @@ def main() -> None:
     parser.add_argument("baseline_file", type=Path)
     parser.add_argument("canary_file", type=Path)
     args = parser.parse_args()
-    baseline = json.loads(args.baseline_file.read_text())
-    canary = json.loads(args.canary_file.read_text())
+    baseline = json.loads(args.baseline_file.read_text(encoding="utf-8"))
+    canary = json.loads(args.canary_file.read_text(encoding="utf-8"))
     print(json.dumps(decide(baseline, canary), indent=2))
 
 
