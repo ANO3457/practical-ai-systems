@@ -22,7 +22,17 @@ DEFAULT_REPO = "https://github.com/shivamnegi92/practical-ai-systems"
 
 
 def build(out: Path, repo_url: str = DEFAULT_REPO, root: Path = ROOT) -> list[str]:
+    root, out = root.resolve(), out.resolve()
+    protected = [root / name for name in ("systems", "scripts", "templates", "tests", "docs", "common", "examples", "catalog", ".git", ".github")]
+    if out == root or out in root.parents or any(out == path or path in out.parents for path in protected):
+        raise ValueError("output directory must not overlap repository source directories")
     manifests = load_manifests(root)
+    for name in manifests:
+        web = root / "systems" / name / "web"
+        for asset in (web / "dist" / "main.js", web / "index.html"):
+            if not asset.is_file():
+                raise FileNotFoundError(f"{name}: {asset} missing; build the web app first")
+    index_page = render_index(manifests, root, repo_url)
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
@@ -38,7 +48,7 @@ def build(out: Path, repo_url: str = DEFAULT_REPO, root: Path = ROOT) -> list[st
         page = page.replace("<body>", '<body>\n  <p><a href="../">&larr; All systems</a></p>', 1)
         (dest / "index.html").write_text(page, encoding="utf-8")
         built.append(name)
-    (out / "index.html").write_text(render_index(manifests, root, repo_url), encoding="utf-8")
+    (out / "index.html").write_text(index_page, encoding="utf-8")
     (out / ".nojekyll").write_text("")
     return built
 
@@ -98,7 +108,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         built = build(args.out, args.repo_url)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     print(f"Built gallery with {len(built)} systems at {args.out}")
