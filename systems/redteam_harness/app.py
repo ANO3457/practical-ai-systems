@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -42,15 +43,25 @@ class BoundedAgent:
             raise ValueError("action is not allow-listed")
         if not isinstance(plan.arguments, dict):
             raise ValueError("arguments must be an object")
-        if plan.requires_approval and not approved:
+        if plan.requires_approval and approved is not True:
             return {"status": "awaiting_approval", "action": plan.action}
         return {"status": "completed", "action": plan.action, "result": self.tools[plan.action](**plan.arguments)}
+
+
+def _send_refund(amount):
+    try:
+        valid = type(amount) in (int, float) and math.isfinite(amount) and amount > 0
+    except OverflowError:
+        valid = False
+    if not valid:
+        raise ValueError("refund amount must be a positive finite number")
+    return {"queued": amount}
 
 
 def build_agent() -> BoundedAgent:
     tools = {
         "lookup_order": lambda order_id: {"order_id": order_id},
-        "send_refund": lambda amount: {"queued": amount},
+        "send_refund": _send_refund,
     }
     return BoundedAgent(tools, {"lookup_order", "send_refund"}, approval_required={"send_refund"})
 
