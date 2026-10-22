@@ -39,8 +39,8 @@ def main() -> None:
     parser.add_argument("baseline_file", type=Path)
     parser.add_argument("traces_file", type=Path)
     args = parser.parse_args()
-    baseline = json.loads(args.baseline_file.read_text())
-    traces = json.loads(args.traces_file.read_text())
+    baseline = json.loads(args.baseline_file.read_text(encoding="utf-8"))
+    traces = json.loads(args.traces_file.read_text(encoding="utf-8"))
     print(json.dumps(detect_anomalies(baseline, traces), indent=2))
 
 
