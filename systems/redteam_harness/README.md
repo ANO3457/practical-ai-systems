@@ -31,3 +31,5 @@ See [`eval/results.json`](eval/results.json) for the shared 14-request Python/we
 - Fourteen hand-written cases are illustrative, not an exhaustive attack surface; a real red team would need many more categories (replay, race conditions, privilege confusion across tools, prompt-level manipulation of the planner).
 - The "injection in arguments" case shows the policy layer allows it because `lookup_order` isn't sensitive -- the policy does not sanitize tool arguments, so the tool implementation itself must treat them as untrusted.
 - Synthetic data is not representative of real production traffic. Expand and independently label cases before relying on these results.
+
+The sample send_refund tool refuses nonnumeric, nonfinite, zero and negative amounts even after approval. This is input validation for a synthetic queued result; it does not implement payments, currency precision or real financial authorization.
