@@ -117,6 +117,10 @@ def _call_tool(params: dict, tools: KnowledgeTools) -> dict:
 
 
 def dispatch(message: dict, tools: KnowledgeTools) -> dict:
+    if (not isinstance(message, dict) or message.get("jsonrpc") != "2.0"
+            or not isinstance(message.get("method"), str) or not message["method"]):
+        return {"jsonrpc": "2.0", "id": None,
+                "error": {"code": -32600, "message": "invalid request"}}
     method = message.get("method")
     params = message.get("params", {})
     request_id = message.get("id")

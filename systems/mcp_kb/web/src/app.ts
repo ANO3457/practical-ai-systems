@@ -93,8 +93,13 @@ function callTool(params: { name?: string; arguments?: Record<string, unknown> }
   }
 }
 
-export function dispatch(message: { method?: string; params?: Record<string, unknown>; id?: unknown }, tools: KnowledgeTools) {
-  const { method, params = {}, id } = message;
+export function dispatch(message: unknown, tools: KnowledgeTools) {
+  const invalid = {jsonrpc: "2.0", id: null, error: {code: -32600, message: "invalid request"}};
+  if (message === null || typeof message !== "object" || Array.isArray(message)) return invalid;
+  const {jsonrpc, method, params = {}, id} = message as {
+    jsonrpc?: unknown; method?: unknown; params?: Record<string, unknown>; id?: unknown;
+  };
+  if (jsonrpc !== "2.0" || typeof method !== "string" || method.length === 0) return invalid;
   const notification = typeof method === "string" && method.length > 0 && !Object.prototype.hasOwnProperty.call(message, "id");
   let result: unknown;
   if (method === "initialize") {
