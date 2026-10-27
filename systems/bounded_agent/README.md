@@ -32,3 +32,5 @@ All **3** policy fixtures pass: an allowed lookup, an unapproved refund that mus
 - Read the source, evaluation case file, and printed method/scope before reusing.
 
 A tool must be an explicitly owned callable entry as well as allow-listed. Planning and execution both reject missing/non-callable entries; inherited JavaScript prototype properties are not tools. These are local stubs, not an authenticated production tool boundary.
+
+Callable-tool checks preserve the existing requirement that sensitive tools run only when approval is the literal boolean true.
