@@ -24,15 +24,21 @@ export class BoundedAgent {
   run(plan: Plan, approved = false) {
     if (!this.allowed.has(plan.action) || !(plan.action in this.tools)) throw new Error("action is not allow-listed");
     if (typeof plan.arguments !== "object" || plan.arguments === null) throw new Error("arguments must be an object");
-    if ((plan.requiresApproval || this.approvalRequired.has(plan.action)) && !approved) return { status: "awaiting_approval", action: plan.action };
+    if ((plan.requiresApproval || this.approvalRequired.has(plan.action)) && approved !== true) return { status: "awaiting_approval", action: plan.action };
     return { status: "completed", action: plan.action, result: this.tools[plan.action](plan.arguments) };
   }
+}
+
+function sendRefund(args: Record<string, unknown>) {
+  const amount = args.amount;
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) throw new RangeError("refund amount must be a positive finite number");
+  return { queued: amount };
 }
 
 export function buildAgent(): BoundedAgent {
   const tools = {
     lookup_order: (args: Record<string, unknown>) => ({ order_id: args.order_id }),
-    send_refund: (args: Record<string, unknown>) => ({ queued: args.amount }),
+    send_refund: sendRefund,
   };
   return new BoundedAgent(tools, new Set(["lookup_order", "send_refund"]), new Set(["send_refund"]));
 }
