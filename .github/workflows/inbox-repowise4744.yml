@@ -1,84 +1,61 @@
-name: Validate Repowise 4744 conflict resolution
+name: Validate CrossGL 3239 main merge
 on:
   push:
+    branches: [validation/resolve-147-oct27]
     paths: [.github/workflows/inbox-repowise4744.yml]
 permissions:
   contents: read
 jobs:
-  verify:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 50
-    env:
-      DO_NOT_TRACK: '1'
-      REPOWISE_SKIP_EDITOR_SETUP: '1'
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: ANO3457/repowise
-          ref: 17a0ab84d24969c907ed53c4eaa43272d4b405c1
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Prepare exact normal merge candidate
-        run: |
-          git config user.name validation
-          git config user.email validation@example.invalid
-          git fetch https://github.com/repowise-dev/repowise.git 1b5e699c7729a6d2059d008d6c6ff9c314207716
-          set +e
-          git merge --no-commit --no-ff FETCH_HEAD
-          result=$?
-          set -e
-          test "$result" -eq 1
-          test "$(git diff --name-only --diff-filter=U)" = packages/core/src/repowise/core/code_origin.py
-          python - <<'PY'
-          from pathlib import Path
-          import re
-          p = Path('packages/core/src/repowise/core/code_origin.py')
-          source, count = re.subn(r'^<<<<<<<[^\n]*\n(.*?)^=======\n(.*?)^>>>>>>>[^\n]*\n', r'\1\2', p.read_text(), flags=re.M | re.S)
-          assert count == 1, count
-          assert '_GO_GENERATED_BANNER_LINE_RE.search(text)' in source
-          assert '_PARSER_TOOL_BANNER_RE.search(text)' in source
-          assert '<<<<<<<' not in source
-          p.write_text(source)
-          PY
-          git add packages/core/src/repowise/core/code_origin.py
-          git diff --cached --check -- packages/core/src/repowise/core/code_origin.py tests/unit/test_code_origin.py
-          sha256sum packages/core/src/repowise/core/code_origin.py tests/unit/test_code_origin.py | tee candidate-hashes.txt
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install locked workspace
-        run: uv sync --all-packages --locked --python 3.12
-      - name: Focused origin tests and full Ruff
+      - name: Prepare exact candidate and retain both changelog sides
         run: |
-          uv run --locked pytest tests/unit/test_code_origin.py -q -o addopts=''
-          uv run --locked ruff check .
-      - name: Verify inherited width and rerun the 28 failures
-        run: |
+          git init -q /tmp/candidate
+          cd /tmp/candidate
+          git config user.name ANO3457
+          git config user.email 187025195+ANO3457@users.noreply.github.com
+          git fetch -q https://github.com/ANO3457/crosstl.git e2850fee46895e03ed97625a2bb3ccd9a53353c0
+          git checkout -q FETCH_HEAD
+          git fetch -q https://github.com/CrossGL/crosstl.git 3c4f6125ea24839e840c38e65f427aed4226dfbf
+          git merge --no-commit --no-ff 3c4f6125ea24839e840c38e65f427aed4226dfbf || true
           python - <<'PY'
-          import json, os, subprocess
-          print('Inherited COLUMNS:', repr(os.environ.get('COLUMNS')))
-          print('Inherited LINES:', repr(os.environ.get('LINES')))
-          env = os.environ.copy()
-          env.pop('COLUMNS', None)
-          env.pop('LINES', None)
-          nodes = json.loads("[\"tests/unit/cli/test_workspace_cmd.py::TestWorkspaceDiagnosticsReport::test_read_not_linked_split_adds_up\",\"tests/unit/cli/test_workspace_cmd.py::TestWorkspaceCheckBreaking::test_failure_line_counts_violations_and_breaking_changes\",\"tests/unit/cli/test_workspace_cmd.py::TestWorkspaceImpactedTests::test_a_link_that_could_not_be_followed_is_printed\",\"tests/unit/cli/test_workspace_cmd.py::TestWorkspaceImpactedTests::test_the_table_names_the_contracts_and_the_provider_files\",\"tests/unit/cli/test_search_collapse.py::test_symbol_mode_renders_the_symbol_table_not_the_page_table\",\"tests/unit/cli/test_coverage_check_cmd.py::test_gate_fails_below_threshold\",\"tests/unit/cli/test_coverage_check_cmd.py::test_max_drop_gates_the_project_delta\",\"tests/unit/cli/test_coverage_check_cmd.py::test_a_failure_found_already_stands_when_there_is_no_base\",\"tests/unit/cli/test_coverage_check_cmd.py::test_fail_under_risky_on_a_shallow_clone_exits_2\",\"tests/unit/cli/test_coverage_check_cmd.py::test_fail_under_branches_gates_the_branch_share\",\"tests/unit/cli/test_coverage_check_cmd.py::test_stored_coverage_takes_the_branch_flag\",\"tests/unit/cli/test_uninstall_cmd.py::test_no_terminal_and_no_scope_flag_removes_nothing_and_exits_non_zero\",\"tests/unit/cli/test_uninstall_cmd.py::test_the_inventory_is_printed_even_when_nothing_is_there\",\"tests/unit/cli/test_decision_config_cmd.py::test_show_recommends_capture_prompt_when_settings_file_lacks_hook\",\"tests/unit/cli/test_output_agent_readiness.py::test_non_tty_gets_an_explicit_wide_width\",\"tests/unit/cli/test_output_agent_readiness.py::test_stream_that_cannot_answer_isatty_is_treated_as_non_tty\",\"tests/unit/cli/test_risk_cmd.py::test_risk_human_output_leads_with_the_size_percentile\",\"tests/unit/cli/test_next_cmd.py::test_a_view_without_a_summary_is_worded_by_core\",\"tests/unit/cli/test_next_cmd.py::test_groups_by_tier_under_the_status_sentence\",\"tests/unit/cli/test_next_cmd.py::test_falls_back_to_the_quarter_when_the_week_holds_no_work\",\"tests/unit/cli/test_risk_cmd_contract.py::test_the_table_says_the_score_measures_shape_not_danger\",\"tests/unit/server/mcp/test_preview_gates.py::test_cli_prints_one_dim_line_for_listed_preview_rows\",\"tests/unit/ingestion/test_runtime_grammars.py::test_the_fetch_command_names_each_grammar_and_fails_when_one_is_missing\",\"tests/unit/cli/test_risk_independent_changes.py::test_a_long_ungrouped_list_is_cut\",\"tests/unit/cli/test_components_cmd.py::test_check_exits_non_zero_on_errors\",\"tests/unit/cli/test_packages_cmd.py::test_where_json_and_text\",\"tests/unit/cli/test_update_degraded_persist_marker.py::test_degraded_git_persist_records_the_range_it_missed\",\"tests/unit/cli/test_update_degraded_persist_marker.py::test_degraded_docs_update_leaves_a_marker_the_next_update_re_covers\"]")
-          raise SystemExit(subprocess.run(['uv', 'run', '--locked', 'pytest', '-q', '-o', 'addopts=', '--junitxml=repair-results.xml', *nodes], env=env).returncode)
+          import pathlib,subprocess
+          p=pathlib.Path('CHANGELOG.md')
+          conflicts=subprocess.check_output(['git','diff','--name-only','--diff-filter=U'],text=True).splitlines()
+          assert conflicts==['CHANGELOG.md'],conflicts
+          text=p.read_text()
+          assert text.count('<<<<<<< ')==1
+          lines=text.splitlines(keepends=True)
+          p.write_text(''.join(l for l in lines if not l.startswith(('<<<<<<< ','=======','>>>>>>> '))))
+          subprocess.run(['git','add','CHANGELOG.md'],check=True)
+          assert not subprocess.check_output(['git','diff','--name-only','--diff-filter=U'],text=True).strip()
+          paths=subprocess.check_output(['git','diff','--cached','--name-only','3c4f6125ea24839e840c38e65f427aed4226dfbf'],text=True).splitlines()
+          assert set(paths)=={'CHANGELOG.md','crosstl/translator/codegen/cuda_codegen.py','crosstl/translator/codegen/hip_codegen.py','tests/test_translator/test_cuda_hip_64bit_aliases.py'},paths
+          import hashlib,json
+          hashes={p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in paths}
+          pathlib.Path('/tmp/candidate-manifest.json').write_text(json.dumps({'base':'3c4f6125ea24839e840c38e65f427aed4226dfbf','head':'e2850fee46895e03ed97625a2bb3ccd9a53353c0','hashes':hashes},indent=2))
+          print(pathlib.Path('/tmp/candidate-manifest.json').read_text())
           PY
-      - name: Documentation drift
-        run: uv run --locked repowise doc-drift --check --baseline .github/doc-drift-baseline.json
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Frontend checks
+      - name: Install test and formatting dependencies
+        working-directory: /tmp/candidate
+        run: python -m pip install -e ".[test]" pre-commit==4.7.0
+      - name: Regression and CUDA HIP neighbour tests
+        working-directory: /tmp/candidate
         run: |
-          npm ci --ignore-scripts
-          npm run build
-          npm run lint
-          npm run type-check
+          python -m pytest tests/test_translator/test_cuda_hip_64bit_aliases.py -q
+          python -m pytest tests/test_translator -q -k 'cuda or hip' -n 2 --dist loadfile --maxfail=3
+      - name: Pinned Black and whitespace
+        working-directory: /tmp/candidate
+        run: |
+          pre-commit run black --show-diff-on-failure --files crosstl/translator/codegen/cuda_codegen.py crosstl/translator/codegen/hip_codegen.py tests/test_translator/test_cuda_hip_64bit_aliases.py
+          git diff --cached --check 3c4f6125ea24839e840c38e65f427aed4226dfbf
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: repair-4744-evidence
-          path: |
-            candidate-hashes.txt
-            repair-results.xml
+          name: cross3239-candidate-manifest
+          path: /tmp/candidate-manifest.json
