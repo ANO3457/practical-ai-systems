@@ -48,3 +48,19 @@ jobs:
           ruff check dspy_code/validation/input_validator.py tests/test_input_field_names.py
           ruff format --check dspy_code/validation/input_validator.py tests/test_input_field_names.py
           git diff --check
+  actual-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ANO3457/dspy-code
+          ref: 18e9505c9a3ca4e7d00f978c0f9f241134205946
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[dev,test]'
+      - run: python -m pytest -o addopts='' tests/ -q
+      - run: ruff check dspy_code/validation/input_validator.py tests/test_input_field_names.py
+      - run: ruff format --check dspy_code/validation/input_validator.py tests/test_input_field_names.py
