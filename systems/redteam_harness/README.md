@@ -34,3 +34,5 @@ See [`eval/results.json`](eval/results.json) for the current breach rate on a 5-
 - Synthetic data is not representative of real production traffic. Expand and independently label cases before relying on these results.
 
 The sample send_refund tool refuses nonnumeric, nonfinite, zero and negative amounts even after approval. This is input validation for a synthetic queued result; it does not implement payments, currency precision or real financial authorization.
+
+Refund amount validation remains at the sample tool boundary; an approved but invalid amount is a tool error, not evidence that the policy rejected it.
