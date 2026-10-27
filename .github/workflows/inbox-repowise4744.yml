@@ -1,61 +1,270 @@
-name: Validate CrossGL 3243 main merge
+name: Validate Ruby dynamic method complexity
 on:
   push:
-    branches: [validation/resolve-147-oct27]
     paths: [.github/workflows/inbox-repowise4744.yml]
 permissions:
   contents: read
+env:
+  DO_NOT_TRACK: '1'
+  REPOWISE_SKIP_EDITOR_SETUP: '1'
 jobs:
-  validate:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 55
     steps:
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+        with:
+          repository: repowise-dev/repowise
+          ref: 1b5e699c7729a6d2059d008d6c6ff9c314207716
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
-      - name: Prepare exact candidate and retain both changelog sides
+      - run: uv sync --frozen --all-packages
+      - name: Add Ruby regressions
         run: |
-          git init -q /tmp/candidate
-          cd /tmp/candidate
-          git config user.name ANO3457
-          git config user.email 187025195+ANO3457@users.noreply.github.com
-          git fetch -q https://github.com/ANO3457/crosstl.git 62fc1e12ae13b13adec0b30f113c19ee66b8dc48
-          git checkout -q FETCH_HEAD
-          git fetch -q https://github.com/CrossGL/crosstl.git 3c4f6125ea24839e840c38e65f427aed4226dfbf
-          git merge --no-commit --no-ff 3c4f6125ea24839e840c38e65f427aed4226dfbf || true
-          python - <<'PY'
-          import pathlib,subprocess
-          p=pathlib.Path('CHANGELOG.md')
-          conflicts=subprocess.check_output(['git','diff','--name-only','--diff-filter=U'],text=True).splitlines()
-          assert conflicts==['CHANGELOG.md'],conflicts
-          text=p.read_text()
-          assert text.count('<<<<<<< ')==1
-          lines=text.splitlines(keepends=True)
-          p.write_text(''.join(l for l in lines if not l.startswith(('<<<<<<< ','=======','>>>>>>> '))))
-          subprocess.run(['git','add','CHANGELOG.md'],check=True)
-          assert not subprocess.check_output(['git','diff','--name-only','--diff-filter=U'],text=True).strip()
-          paths=subprocess.check_output(['git','diff','--cached','--name-only','3c4f6125ea24839e840c38e65f427aed4226dfbf'],text=True).splitlines()
-          assert set(paths)=={'CHANGELOG.md','crosstl/translator/codegen/wgsl_codegen.py','tests/test_translator/test_wgsl_function_prototypes.py'},paths
-          import hashlib,json
-          hashes={p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in paths}
-          pathlib.Path('/tmp/candidate-manifest.json').write_text(json.dumps({'base':'3c4f6125ea24839e840c38e65f427aed4226dfbf','head':'62fc1e12ae13b13adec0b30f113c19ee66b8dc48','hashes':hashes},indent=2))
-          print(pathlib.Path('/tmp/candidate-manifest.json').read_text())
+          cat > tests/unit/health/test_ruby_dynamic_methods.py <<'PY'
+          """Ruby class-method containers and named define_method bodies."""
+          import pytest
+          
+          from repowise.core.analysis.health.complexity import walk_file
+          
+          
+          def test_singleton_self_and_define_method_belong_to_the_class():
+              source = b"""
+          class Foo
+            def a; @x; end
+            class << self
+              def build; new; end
+            end
+            define_method(:dyn) do |v|
+              if v then 1 else 2 end
+            end
+          end
+          """
+              result = walk_file("foo.rb", "ruby", source)
+              assert [c.name for c in result.classes] == ["Foo"]
+              cls = result.classes[0]
+              assert cls.method_count == 3
+              assert {m.name for m in cls.methods} == {"a", "build", "dyn"}
+              dynamic = next(f for f in result.functions if f.name == "dyn")
+              assert dynamic.ccn == 2
+              assert dynamic.param_count == 1
+          
+          
+          @pytest.mark.parametrize("name", [":dyn", '"dyn"', ':"dyn"'])
+          @pytest.mark.parametrize("receiver", ["", "self."])
+          @pytest.mark.parametrize("body", ["do |v|\n if v then 1 else 2 end\nend", "{ |v| v ? 1 : 2 }"])
+          def test_named_define_method_forms_are_measured(name, receiver, body):
+              source = f"class Foo\n {receiver}define_method({name}) {body}\nend\n".encode()
+              result = walk_file("foo.rb", "ruby", source)
+              assert len(result.functions) == 1
+              dynamic = result.functions[0]
+              assert dynamic.name == "dyn"
+              assert dynamic.ccn == 2
+              assert dynamic.param_count == 1
+              assert result.classes[0].method_count == 1
+          
+          
+          def test_non_self_singleton_keeps_its_own_methods():
+              result = walk_file("object.rb", "ruby", b"class << obj\n def other; 1; end\nend\n")
+              assert len(result.classes) == 1
+              assert {m.name for m in result.classes[0].methods} == {"other"}
+          
+          
+          def test_nested_class_and_other_receiver_do_not_leak_into_outer_class():
+              result = walk_file("foo.rb", "ruby", b"""
+          class Foo
+            class << self
+              def build; 1; end
+              class Inner
+                def nested; 2; end
+              end
+            end
+            other.define_method(:foreign) { 3 }
+            define_method(:without_body)
+          end
+          """)
+              classes = {cls.name: cls for cls in result.classes}
+              assert set(classes) == {"Foo", "Inner"}
+              assert {m.name for m in classes["Foo"].methods} == {"build"}
+              assert {m.name for m in classes["Inner"].methods} == {"nested"}
+              assert {f.name for f in result.functions} == {"build", "nested"}
+          
+          
+          def test_ordinary_blocks_still_roll_into_the_containing_method():
+              result = walk_file("foo.rb", "ruby", b"""
+          class Foo
+            def process(values)
+              values.each { |v| if v then work(v) end }
+            end
+            define_method(:empty) {}
+          end
+          """)
+              functions = {f.name: f for f in result.functions}
+              assert set(functions) == {"process", "empty"}
+              assert functions["process"].ccn == 2
+              assert functions["empty"].ccn == 1
+          
+          
+          def test_nested_dynamic_method_is_not_counted_in_the_outer_complexity():
+              result = walk_file("foo.rb", "ruby", b"""
+          def install
+            define_method(:dyn) { |v| if v then 1 else 2 end }
+          end
+          """)
+              functions = {f.name: f for f in result.functions}
+              assert set(functions) == {"install", "dyn"}
+              assert functions["install"].ccn == 1
+              assert functions["dyn"].ccn == 2
+          
           PY
-      - name: Install test and formatting dependencies
-        working-directory: /tmp/candidate
-        run: python -m pip install -e ".[test]" pre-commit==4.7.0
-      - name: Regression and WGSL neighbour tests
-        working-directory: /tmp/candidate
+      - name: Verify unchanged-base failures and non-self control
         run: |
-          python -m pytest tests/test_translator/test_wgsl_function_prototypes.py -q
-          python -m pytest tests/test_translator -q -k 'wgsl' -n 2 --dist loadfile --maxfail=3
-      - name: Pinned Black and whitespace
-        working-directory: /tmp/candidate
+          set +e
+          uv run pytest tests/unit/health/test_ruby_dynamic_methods.py -q --junitxml=/tmp/red.xml > /tmp/red.txt 2>&1
+          result=$?
+          set -e
+          cat /tmp/red.txt
+          test "$result" -eq 1
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          root=ET.parse('/tmp/red.xml').getroot()
+          assert not root.findall('.//error')
+          failed=root.findall('.//failure')
+          assert failed
+          controls=[x for x in root.findall('.//testcase') if x.attrib['name']=='test_non_self_singleton_keeps_its_own_methods']
+          assert len(controls)==1 and controls[0].find('failure') is None
+          print('RED failures:',len(failed),'non-self control PASS')
+          PY
+      - name: Apply candidate
         run: |
-          pre-commit run black --show-diff-on-failure --files crosstl/translator/codegen/wgsl_codegen.py tests/test_translator/test_wgsl_function_prototypes.py
-          git diff --cached --check 3c4f6125ea24839e840c38e65f427aed4226dfbf
+          cat > /tmp/apply.py <<'PY'
+          from pathlib import Path
+          replacements = {
+            "languages.py": [
+              [
+                "    # -- Local bindings ------------------------------------------------------",
+                "    # A class-shaped scope that contributes its members to the enclosing type.\n    transparent_class: Callable[[Node], bool] | None = None\n    # A named function defined by another syntax, such as Ruby define_method.\n    extra_function_name: Callable[[Node], str | None] | None = None\n\n    # -- Local bindings ------------------------------------------------------"
+              ],
+              [
+                "_RUBY = LanguageNodeMap(",
+                "def _ruby_singleton_self(node: Node) -> bool:\n    return (\n        node.type == \"singleton_class\"\n        and (value := node.child_by_field_name(\"value\")) is not None\n        and value.type == \"self\"\n    )\n\n\ndef _ruby_defined_method_name(node: Node) -> str | None:\n    if node.type != \"call\":\n        return None\n    method = node.child_by_field_name(\"method\")\n    receiver = node.child_by_field_name(\"receiver\")\n    if (\n        method is None\n        or method.text != b\"define_method\"\n        or (receiver is not None and receiver.type != \"self\")\n        or node.child_by_field_name(\"block\") is None\n    ):\n        return None\n    arguments = node.child_by_field_name(\"arguments\")\n    if arguments is None or len(arguments.named_children) != 1:\n        return None\n    name = arguments.named_children[0]\n    if name.type == \"simple_symbol\" and name.text:\n        return name.text[1:].decode(\"utf-8\", errors=\"replace\")\n    if name.type in {\"string\", \"delimited_symbol\"} and all(\n        child.type == \"string_content\" for child in name.named_children\n    ):\n        return \"\".join(\n            (child.text or b\"\").decode(\"utf-8\", errors=\"replace\")\n            for child in name.named_children\n        )\n    return None\n\n\n_RUBY = LanguageNodeMap("
+              ],
+              [
+                "    class_kinds=frozenset({\"class\", \"module\", \"singleton_class\"}),",
+                "    class_kinds=frozenset({\"class\", \"module\", \"singleton_class\"}),\n    transparent_class=_ruby_singleton_self,\n    extra_function_name=_ruby_defined_method_name,"
+              ]
+            ],
+            "ast_utils.py": [
+              [
+                "def is_function_node(node: Node, lmap: LanguageNodeMap) -> bool:",
+                "def extra_function_name(node: Node, lmap: LanguageNodeMap) -> str | None:\n    return lmap.extra_function_name(node) if lmap.extra_function_name is not None else None\n\n\ndef is_transparent_class(node: Node, lmap: LanguageNodeMap) -> bool:\n    return lmap.transparent_class is not None and lmap.transparent_class(node)\n\n\ndef is_function_node(node: Node, lmap: LanguageNodeMap) -> bool:"
+              ],
+              [
+                "        node.type in lmap.function_kinds\n        and not is_misread_scope",
+                "        (node.type in lmap.function_kinds or extra_function_name(node, lmap) is not None)\n        and not is_misread_scope"
+              ],
+              [
+                "def _find_function_entry_name(node: Node, lmap: LanguageNodeMap) -> str:\n",
+                "def _find_function_entry_name(node: Node, lmap: LanguageNodeMap) -> str:\n    if (name := extra_function_name(node, lmap)) is not None:\n        return name\n"
+              ],
+              [
+                "    \"\"\"C, C++, Dart and Pascal keep the parameter list off the function node.\"\"\"",
+                "    \"\"\"Some grammars keep the parameter list off the function node.\"\"\"\n    if fn_node.type == \"call\":\n        block = fn_node.child_by_field_name(\"block\")\n        if block is not None:\n            return block.child_by_field_name(\"parameters\")"
+              ]
+            ],
+            "class_analysis.py": [
+              [
+                "    is_misread_scope,\n",
+                "    is_misread_scope,\n    is_transparent_class,\n"
+              ],
+              [
+                "        if node.type in lmap.class_kinds:\n            body.nested.append(node)\n",
+                "        if node.type in lmap.class_kinds and not is_transparent_class(node, lmap):\n            body.nested.append(node)\n"
+              ],
+              [
+                "        elif node.type in lmap.function_kinds:\n            if _is_own_method(node, lmap, language, source):\n                body.methods.append(node)\n",
+                "        elif _is_own_method(node, lmap, language, source):\n            body.methods.append(node)\n"
+              ]
+            ],
+            "file_scan.py": [
+              [
+                "from .error_handling import",
+                "from .ast_utils import extra_function_name, is_transparent_class\nfrom .error_handling import"
+              ],
+              [
+                "        if class_kinds and t in class_kinds and node.is_named:\n",
+                "        if class_kinds and t in class_kinds and node.is_named and not is_transparent_class(node, lmap):\n"
+              ],
+              [
+                "        if t in function_kinds:\n",
+                "        if t in function_kinds or extra_function_name(node, lmap) is not None:\n"
+              ]
+            ],
+            "cyclomatic.py": [
+              [
+                "from .body_facts import",
+                "from .ast_utils import extra_function_name\nfrom .body_facts import"
+              ],
+              [
+                "        if cur is not node and (cur.type in lmap.function_kinds or cur.type in lmap.lambda_kinds):\n",
+                "        if cur is not node and (\n            cur.type in lmap.function_kinds\n            or cur.type in lmap.lambda_kinds\n            or extra_function_name(cur, lmap) is not None\n        ):\n"
+              ],
+              [
+                "        if node_type in lmap.function_kinds:\n",
+                "        if node_type in lmap.function_kinds or extra_function_name(node, lmap) is not None:\n"
+              ]
+            ],
+            "walker.py": [
+              [
+                "        body = fn_node.child_by_field_name(\"body\") or fn_node\n",
+                "        body = (\n            fn_node.child_by_field_name(\"body\")\n            or fn_node.child_by_field_name(\"block\")\n            or fn_node\n        )\n"
+              ]
+            ]
+          }
+          for filename, changes in replacements.items():
+              p=Path('packages/core/src/repowise/core/analysis/health/complexity/')/filename
+              s=p.read_text()
+              for old,new in changes:
+                  assert s.count(old)==1,(filename,old)
+                  s=s.replace(old,new)
+              p.write_text(s)
+          
+          PY
+          python /tmp/apply.py
+      - name: New regressions and neighbouring health tests
+        run: |
+          uv run pytest tests/unit/health/test_ruby_dynamic_methods.py -q
+          uv run pytest tests/unit/health/ -q -n 4 --dist loadfile --maxfail=3 --junitxml=/tmp/health.xml
+          uv run ruff check .
+          uv run ruff format tests/unit/health/test_ruby_dynamic_methods.py
+          git diff --check
+      - name: Full provider and unit suites in isolated CLI process
+        run: |
+          uv run pytest tests/unit/cli/ -q -n 4 --dist loadfile --maxfail=3 --junitxml=/tmp/cli.xml
+          uv run pytest tests/providers/ tests/unit/ --ignore=tests/unit/cli/ -q -n 4 --dist loadfile --maxfail=3 --junitxml=/tmp/full.xml
+      - name: Documentation and candidate manifest
+        run: |
+          uv run repowise doc-drift --check --baseline .github/doc-drift-baseline.json
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          paths=subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()+['tests/unit/health/test_ruby_dynamic_methods.py']
+          result={p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}
+          print(json.dumps(result,indent=2))
+          Path('/tmp/candidate-manifest.json').write_text(json.dumps(result,indent=2))
+          PY
+          git diff --stat
+          cat tests/unit/health/test_ruby_dynamic_methods.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cross3243-candidate-manifest
-          path: /tmp/candidate-manifest.json
+          name: ruby-complexity-evidence
+          path: |
+            /tmp/red.xml
+            /tmp/health.xml
+            /tmp/cli.xml
+            /tmp/full.xml
+            /tmp/candidate-manifest.json
+            tests/unit/health/test_ruby_dynamic_methods.py
