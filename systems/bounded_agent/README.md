@@ -32,3 +32,5 @@ All **3** policy fixtures pass: an allowed lookup, an unapproved refund that mus
 - Read the source, evaluation case file, and printed method/scope before reusing.
 
 Approval configuration: omitting the approval set (or Python `None`) requires approval for every allowed tool. An explicitly empty set requires none; a partial set requires approval only for its members. The allow-list is always enforced. Tests use local stub functions only; these examples are not production authorization systems.
+
+For any action that requires approval, only the literal boolean true authorizes execution.
