@@ -1,5 +1,6 @@
 """Score voice-agent transcripts against task outcomes and control requirements."""
 from __future__ import annotations
+import math
 from statistics import median
 
 def score_turns(turns: list[dict], required_actions: list[str], forbidden_actions: list[str] | None = None) -> dict:
@@ -14,4 +15,6 @@ def score_turns(turns: list[dict], required_actions: list[str], forbidden_action
     actions=[a.lower() for t in turns if t.get('speaker')=='agent' for a in t.get('actions',[])]
     violations=[a for a in forbidden_actions if a.lower() in actions]
     latency=[t['latency_ms'] for t in turns if t.get('speaker')=='agent' and 'latency_ms' in t]
+    if any(isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) or v<0 for v in latency):
+        raise ValueError("agent latency_ms must be a finite non-negative number")
     return {"task_success":not missing,"missing_requirements":missing,"forbidden_action_violations":violations,"safe":not violations,"agent_turns":sum(t.get('speaker')=='agent' for t in turns),"median_latency_ms":median(latency) if latency else None}
