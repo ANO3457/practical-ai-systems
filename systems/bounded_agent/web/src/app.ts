@@ -26,7 +26,7 @@ export class BoundedAgent {
   run(plan: Plan, approved = false) {
     if (!this.allowed.has(plan.action) || !Object.prototype.hasOwnProperty.call(this.tools, plan.action) || typeof this.tools[plan.action] !== "function") throw new Error("action is not allow-listed");
     if (typeof plan.arguments !== "object" || plan.arguments === null) throw new Error("arguments must be an object");
-    if (plan.requiresApproval && !approved) return { status: "awaiting_approval", action: plan.action };
+    if (plan.requiresApproval && approved !== true) return { status: "awaiting_approval", action: plan.action };
     return { status: "completed", action: plan.action, result: this.tools[plan.action](plan.arguments) };
   }
 }

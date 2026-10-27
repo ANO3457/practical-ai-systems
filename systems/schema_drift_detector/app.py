@@ -48,8 +48,8 @@ def main() -> None:
     parser.add_argument("schema_file", type=Path)
     parser.add_argument("records_file", type=Path)
     args = parser.parse_args()
-    schema = json.loads(args.schema_file.read_text())
-    records = json.loads(args.records_file.read_text())
+    schema = json.loads(args.schema_file.read_text(encoding="utf-8"))
+    records = json.loads(args.records_file.read_text(encoding="utf-8"))
     print(json.dumps(detect_drift(schema, records), indent=2))
 
 
