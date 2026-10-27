@@ -41,7 +41,7 @@ jobs:
           p.write_text(source)
           PY
           git add packages/core/src/repowise/core/code_origin.py
-          git diff --cached --check
+          git diff --cached --check -- packages/core/src/repowise/core/code_origin.py tests/unit/test_code_origin.py
           sha256sum packages/core/src/repowise/core/code_origin.py tests/unit/test_code_origin.py | tee candidate-hashes.txt
       - uses: astral-sh/setup-uv@v7
         with:
