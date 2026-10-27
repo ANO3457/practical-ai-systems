@@ -29,7 +29,7 @@ jobs:
       - name: Prove regression on untouched source
         run: |
           set +e
-          python -m pytest tests/test_input_field_names.py -q > /tmp/red.log 2>&1
+          python -m pytest -o addopts='' tests/test_input_field_names.py -q > /tmp/red.log 2>&1
           code=$?
           set -e
           cat /tmp/red.log
@@ -44,7 +44,7 @@ jobs:
           PY
       - name: Verify regression and related tests
         run: |
-          python -m pytest tests/test_input_field_names.py tests/test_validation.py -q
+          python -m pytest -o addopts='' tests/test_input_field_names.py tests/test_validation.py -q
           ruff check dspy_code/validation/input_validator.py tests/test_input_field_names.py
           ruff format --check dspy_code/validation/input_validator.py tests/test_input_field_names.py
           git diff --check
