@@ -32,3 +32,5 @@ On three synthetic calls, the rubric marks task completion **1.00** and detects 
 - Synthetic data is not representative of real production traffic. Expand and independently label cases before relying on these results.
 - The implementation is intentionally small and deterministic. It does not establish production-readiness, security, or fitness for any specific deployment.
 - Read the source, evaluation case file, and printed method/scope before reusing.
+
+Measured agent latencies must remain finite, non-negative numbers; the median change does not relax that validation.
