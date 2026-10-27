@@ -1,0 +1,74 @@
+name: Validate Repowise 4744 conflict resolution
+on:
+  push:
+    paths: [.github/workflows/inbox-repowise4744.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      DO_NOT_TRACK: '1'
+      REPOWISE_SKIP_EDITOR_SETUP: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ANO3457/repowise
+          ref: 17a0ab84d24969c907ed53c4eaa43272d4b405c1
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare exact normal merge candidate
+        run: |
+          git config user.name validation
+          git config user.email validation@example.invalid
+          git fetch https://github.com/repowise-dev/repowise.git 1b5e699c7729a6d2059d008d6c6ff9c314207716
+          set +e
+          git merge --no-commit --no-ff FETCH_HEAD
+          result=$?
+          set -e
+          test "$result" -eq 1
+          test "$(git diff --name-only --diff-filter=U)" = packages/core/src/repowise/core/code_origin.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('packages/core/src/repowise/core/code_origin.py')
+          source, count = re.subn(r'^<<<<<<<[^\n]*\n(.*?)^=======\n(.*?)^>>>>>>>[^\n]*\n', r'\1\2', p.read_text(), flags=re.M | re.S)
+          assert count == 1, count
+          assert '_GO_GENERATED_BANNER_LINE_RE.search(text)' in source
+          assert '_PARSER_TOOL_BANNER_RE.search(text)' in source
+          assert '<<<<<<<' not in source
+          p.write_text(source)
+          PY
+          git add packages/core/src/repowise/core/code_origin.py
+          git diff --cached --check
+          sha256sum packages/core/src/repowise/core/code_origin.py tests/unit/test_code_origin.py | tee candidate-hashes.txt
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.12'
+      - name: Install locked workspace
+        run: uv sync --all-packages --locked --python 3.12
+      - name: Focused origin tests and full Ruff
+        run: |
+          uv run --locked pytest tests/unit/test_code_origin.py -q -o addopts=''
+          uv run --locked ruff check .
+      - name: Full provider and unit suites
+        run: uv run --locked pytest tests/providers/ tests/unit/ -n 4 --dist loadfile -o 'addopts=-q --tb=short' --junitxml=repair-results.xml
+      - name: Documentation drift
+        run: uv run --locked repowise doc-drift --check --baseline .github/doc-drift-baseline.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Frontend checks
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+          npm run lint
+          npm run type-check
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: repair-4744-evidence
+          path: |
+            candidate-hashes.txt
+            repair-results.xml
