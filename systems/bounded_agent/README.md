@@ -32,3 +32,5 @@ All **3** policy fixtures pass: an allowed lookup, an unapproved refund that mus
 - Read the source, evaluation case file, and printed method/scope before reusing.
 
 Execution checks the current approval policy as well as the plan flag. A caller-supplied false flag cannot bypass a tool's required approval; a stricter true flag still requires it. The demo boolean is not authenticated human approval and this remains a local stub example.
+
+Both the plan flag and current policy require approval to be the literal boolean true; truthy strings and numbers do not authorize execution.
