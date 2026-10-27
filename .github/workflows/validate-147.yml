@@ -1,0 +1,39 @@
+name: Validate PR 147 merge candidate
+on:
+  push:
+    branches: [validation/resolve-147-oct27]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: shivamnegi92/practical-ai-systems
+          ref: c66546cf14109a92d22efdebc1c7758e5d68b045
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply candidate and regression test
+        run: |
+          git fetch https://github.com/ANO3457/practical-ai-systems.git 77e3f64597363fcdae11e0d0687bb1eedec86d1b
+          git show 77e3f64597363fcdae11e0d0687bb1eedec86d1b:tests/test_render_explicit_root.py > tests/test_render_explicit_root.py
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/render_systems.py')
+          s = p.read_text()
+          old = '    for level, summary in LEVEL_SUMMARIES.items():\n'
+          assert s.count(old) == 1
+          s = s.replace(old, '    systems = load_manifests(root)\n' + old)
+          old = '        for name, info in SYSTEMS.items():\n'
+          assert s.count(old) == 1
+          s = s.replace(old, '        for name, info in systems.items():\n')
+          p.write_text(s)
+          PY
+      - name: Validate tests and repository checks
+        run: |
+          python -m unittest discover -s tests -p 'test_render*.py' -v
+          python scripts/render_systems.py
+          git diff --check
