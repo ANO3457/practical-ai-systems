@@ -32,3 +32,5 @@ All **3** policy fixtures pass: an allowed lookup, an unapproved refund that mus
 - Synthetic data is not representative of real production traffic. Expand and independently label cases before relying on these results.
 - The implementation is intentionally small and deterministic. It does not establish production-readiness, security, or fitness for any specific deployment.
 - Read the source, evaluation case file, and printed method/scope before reusing.
+
+These argument-shape checks preserve the existing requirement that sensitive tools run only when approval is the literal boolean true.
