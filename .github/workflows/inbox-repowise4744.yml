@@ -1,4 +1,4 @@
-name: Validate CrossGL 3239 main merge
+name: Validate CrossGL 3243 main merge
 on:
   push:
     branches: [validation/resolve-147-oct27]
@@ -19,7 +19,7 @@ jobs:
           cd /tmp/candidate
           git config user.name ANO3457
           git config user.email 187025195+ANO3457@users.noreply.github.com
-          git fetch -q https://github.com/ANO3457/crosstl.git e2850fee46895e03ed97625a2bb3ccd9a53353c0
+          git fetch -q https://github.com/ANO3457/crosstl.git 62fc1e12ae13b13adec0b30f113c19ee66b8dc48
           git checkout -q FETCH_HEAD
           git fetch -q https://github.com/CrossGL/crosstl.git 3c4f6125ea24839e840c38e65f427aed4226dfbf
           git merge --no-commit --no-ff 3c4f6125ea24839e840c38e65f427aed4226dfbf || true
@@ -35,27 +35,27 @@ jobs:
           subprocess.run(['git','add','CHANGELOG.md'],check=True)
           assert not subprocess.check_output(['git','diff','--name-only','--diff-filter=U'],text=True).strip()
           paths=subprocess.check_output(['git','diff','--cached','--name-only','3c4f6125ea24839e840c38e65f427aed4226dfbf'],text=True).splitlines()
-          assert set(paths)=={'CHANGELOG.md','crosstl/translator/codegen/cuda_codegen.py','crosstl/translator/codegen/hip_codegen.py','tests/test_translator/test_cuda_hip_64bit_aliases.py'},paths
+          assert set(paths)=={'CHANGELOG.md','crosstl/translator/codegen/wgsl_codegen.py','tests/test_translator/test_wgsl_function_prototypes.py'},paths
           import hashlib,json
           hashes={p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in paths}
-          pathlib.Path('/tmp/candidate-manifest.json').write_text(json.dumps({'base':'3c4f6125ea24839e840c38e65f427aed4226dfbf','head':'e2850fee46895e03ed97625a2bb3ccd9a53353c0','hashes':hashes},indent=2))
+          pathlib.Path('/tmp/candidate-manifest.json').write_text(json.dumps({'base':'3c4f6125ea24839e840c38e65f427aed4226dfbf','head':'62fc1e12ae13b13adec0b30f113c19ee66b8dc48','hashes':hashes},indent=2))
           print(pathlib.Path('/tmp/candidate-manifest.json').read_text())
           PY
       - name: Install test and formatting dependencies
         working-directory: /tmp/candidate
         run: python -m pip install -e ".[test]" pre-commit==4.7.0
-      - name: Regression and CUDA HIP neighbour tests
+      - name: Regression and WGSL neighbour tests
         working-directory: /tmp/candidate
         run: |
-          python -m pytest tests/test_translator/test_cuda_hip_64bit_aliases.py -q
-          python -m pytest tests/test_translator -q -k 'cuda or hip' -n 2 --dist loadfile --maxfail=3
+          python -m pytest tests/test_translator/test_wgsl_function_prototypes.py -q
+          python -m pytest tests/test_translator -q -k 'wgsl' -n 2 --dist loadfile --maxfail=3
       - name: Pinned Black and whitespace
         working-directory: /tmp/candidate
         run: |
-          pre-commit run black --show-diff-on-failure --files crosstl/translator/codegen/cuda_codegen.py crosstl/translator/codegen/hip_codegen.py tests/test_translator/test_cuda_hip_64bit_aliases.py
+          pre-commit run black --show-diff-on-failure --files crosstl/translator/codegen/wgsl_codegen.py tests/test_translator/test_wgsl_function_prototypes.py
           git diff --cached --check 3c4f6125ea24839e840c38e65f427aed4226dfbf
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cross3239-candidate-manifest
+          name: cross3243-candidate-manifest
           path: /tmp/candidate-manifest.json
