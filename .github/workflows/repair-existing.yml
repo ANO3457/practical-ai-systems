@@ -1,0 +1,149 @@
+name: Repair existing Practical PR conflicts
+on:
+  push:
+    branches: [validation/resolve-147-oct27]
+    paths: [.github/workflows/repair-existing.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve and test each existing PR
+        env:
+          PR_PLAN: '[{"n":100,"head":"a657b5ad01e0fa88c7a2019d873a4e07bf8fa5ba","branch":"fix/redteam-tool-errors-oct17","allowed":["systems/redteam_harness/README.md","systems/redteam_harness/app.py","systems/redteam_harness/eval/results.json","systems/redteam_harness/evaluate.py","systems/redteam_harness/test_tool_errors.py","systems/redteam_harness/web/src/app.test.ts","systems/redteam_harness/web/src/app.ts"]},{"n":96,"head":"09090428bdcef6958cff3e3d90833f1b562b1a98","branch":"fix/agent-object-arguments-oct17","allowed":["systems/bounded_agent/README.md","systems/bounded_agent/web/src/app.test.ts","systems/bounded_agent/web/src/app.ts","systems/redteam_harness/README.md","systems/redteam_harness/web/src/app.test.ts","systems/redteam_harness/web/src/app.ts"]},{"n":85,"head":"e762a7fec6dbdd9746c0e2c2a29f75ee88209db2","branch":"fix/voice-even-median-extra5","allowed":["systems/voice_eval/README.md","systems/voice_eval/app.py","systems/voice_eval/evaluate.py","systems/voice_eval/test_median.py","systems/voice_eval/web/src/app.test.ts","systems/voice_eval/web/src/app.ts"]},{"n":79,"head":"a8130260e786660f4444eea71352a684427204f3","branch":"fix/owned-callable-tools-wave2","allowed":["systems/bounded_agent/README.md","systems/bounded_agent/app.py","systems/bounded_agent/test_tool_availability.py","systems/bounded_agent/web/src/app.test.ts","systems/bounded_agent/web/src/app.ts","systems/redteam_harness/README.md","systems/redteam_harness/app.py","systems/redteam_harness/test_tool_availability.py","systems/redteam_harness/web/src/app.test.ts","systems/redteam_harness/web/src/app.ts"]},{"n":71,"head":"eba9fe2b31949ed04ea91b3b9c30a6d289eeb3e9","branch":"fix/run-approval-policy-extra5","allowed":["systems/bounded_agent/README.md","systems/bounded_agent/app.py","systems/bounded_agent/test_run_policy.py","systems/bounded_agent/web/src/app.test.ts","systems/bounded_agent/web/src/app.ts","systems/redteam_harness/README.md","systems/redteam_harness/app.py","systems/redteam_harness/test_run_policy.py","systems/redteam_harness/web/src/app.test.ts","systems/redteam_harness/web/src/app.ts"]},{"n":66,"head":"dc335e489a00b259bcab52ca802db9e8e455a793","branch":"fix/explicit-empty-approval-oct16","allowed":["systems/bounded_agent/README.md","systems/bounded_agent/app.py","systems/bounded_agent/test_approval_defaults.py","systems/bounded_agent/web/src/app.test.ts","systems/bounded_agent/web/src/app.ts","systems/redteam_harness/README.md","systems/redteam_harness/app.py","systems/redteam_harness/test_approval_defaults.py","systems/redteam_harness/web/src/app.test.ts","systems/redteam_harness/web/src/app.ts"]}]'
+        run: |
+          cat > /tmp/repair.py <<'PY'
+          import json, os, subprocess, pathlib, sys
+          BASE = "c66546cf14109a92d22efdebc1c7758e5d68b045"
+          PRS = json.loads(os.environ["PR_PLAN"])
+          OUT = pathlib.Path(os.environ["GITHUB_WORKSPACE"]) / "repair-evidence"
+          OUT.mkdir()
+          def run(args, cwd, **kw):
+              return subprocess.run(args, cwd=cwd, check=True, text=True, **kw)
+          for pr in PRS:
+              print(f"::group::Repair and verify PR {pr['n']}", flush=True)
+              root = pathlib.Path("/tmp") / f"pr-repair-{pr['n']}"
+              root.mkdir()
+              run(["git","init","-q"], root)
+              run(["git","config","user.name","ANO3457"], root)
+              run(["git","config","user.email","187025195+ANO3457@users.noreply.github.com"], root)
+              run(["git","fetch","-q","https://github.com/ANO3457/practical-ai-systems.git",pr["head"]],root)
+              run(["git","checkout","-q","-b",pr["branch"],pr["head"]],root)
+              run(["git","fetch","-q","https://github.com/shivamnegi92/practical-ai-systems.git",BASE],root)
+              run(["git","merge","--no-commit","--no-ff","-Xours",BASE],root)
+              # Keep the accepted literal-true approval checks when resolving old policy branches.
+              for path in ["systems/bounded_agent/app.py","systems/redteam_harness/app.py",
+                           "systems/bounded_agent/web/src/app.ts","systems/redteam_harness/web/src/app.ts"]:
+                  p=root/path
+                  text=p.read_text()
+                  text=text.replace("and not approved", "and approved is not True")
+                  text=text.replace("&& !approved", "&& approved !== true")
+                  p.write_text(text)
+              if pr["n"] == 85:
+                  path="systems/voice_eval/app.py"
+                  text=subprocess.check_output(["git","show",BASE+":"+path],cwd=root,text=True)
+                  assert "import math" in text
+                  text=text.replace("import math\n","import math\nfrom statistics import median\n")
+                  old="sorted(latency)[len(latency)//2] if latency else None"
+                  assert text.count(old)==1
+                  (root/path).write_text(text.replace(old,"median(latency) if latency else None"))
+                  path="systems/voice_eval/web/src/app.ts"
+                  text=subprocess.check_output(["git","show",BASE+":"+path],cwd=root,text=True)
+                  old="sortedLatency.length ? sortedLatency[Math.floor(sortedLatency.length / 2)] : null"
+                  assert text.count(old)==1
+                  new="sortedLatency.length ? sortedLatency[Math.floor((sortedLatency.length - 1) / 2)] / 2 + sortedLatency[Math.floor(sortedLatency.length / 2)] / 2 : null"
+                  (root/path).write_text(text.replace(old,new))
+              # Verify accepted refund and approval hardening is present before executing any tests.
+              for path in ["systems/bounded_agent/app.py","systems/redteam_harness/app.py"]:
+                  assert "approved is not True" in (root/path).read_text(), path
+              for path in ["systems/bounded_agent/web/src/app.ts","systems/redteam_harness/web/src/app.ts"]:
+                  assert "approved !== true" in (root/path).read_text(), path
+              assert "def _send_refund(amount)" in (root/"systems/redteam_harness/app.py").read_text()
+              assert '"send_refund": _send_refund' in (root/"systems/redteam_harness/app.py").read_text()
+              assert "function sendRefund(" in (root/"systems/redteam_harness/web/src/app.ts").read_text()
+              assert "send_refund: sendRefund" in (root/"systems/redteam_harness/web/src/app.ts").read_text()
+              # Do not run editor hooks or files outside the repository's ordinary test tools.
+              tree=subprocess.check_output(["git","ls-files"],cwd=root,text=True).splitlines()
+              assert not any(p.startswith(".vscode/") or "fa-solid-300.ttf" in p for p in tree)
+              run([sys.executable,"scripts/render_systems.py","--write"],root)
+              run(["git","add","-A"],root)
+              # Restrict changes relative to upstream to the original PR scope plus generated README.
+              changed=subprocess.check_output(["git","diff","--cached","--name-only",BASE],cwd=root,text=True).splitlines()
+              assert set(changed)<=set(pr["allowed"])|{"README.md"}, changed
+              run(["make","check"],root)
+              systems=["voice_eval"] if pr["n"]==85 else ["bounded_agent","redteam_harness"]
+              for system in systems:
+                  web=root/"systems"/system/"web"
+                  run(["npm","ci","--ignore-scripts","--no-audit","--no-fund"],web)
+                  # Execute only the pinned compiler and test runner; include all checked-in tests.
+                  run(["node","node_modules/typescript/bin/tsc"],web)
+                  sources=list((web/"src").glob("*.test.ts"))
+                  tests=[str(web/"dist"/(p.stem+".js")) for p in sources]
+                  run(["node","--test",*tests],web)
+              run(["git","diff","--check"],root)
+              run(["git","commit","-qm",f"Merge current main and preserve accepted hardening for PR #{pr['n']}"],root)
+              sha=subprocess.check_output(["git","rev-parse","HEAD"],cwd=root,text=True).strip()
+              parents=subprocess.check_output(["git","rev-list","--parents","-n","1","HEAD"],cwd=root,text=True).split()
+              assert parents[1:]==[pr["head"],BASE],parents
+              pr["candidate"]=sha
+              run(["git","bundle","create",str(OUT/f"{pr['n']}.bundle"),"HEAD"],root)
+              (OUT/f"{pr['n']}.diff").write_text(subprocess.check_output(["git","diff",BASE,"HEAD"],cwd=root,text=True))
+              print(f"PR {pr['n']} TESTED {sha} BASE {BASE}",flush=True)
+              print("::endgroup::",flush=True)
+          (OUT/"manifest.json").write_text(json.dumps({"base":BASE,"prs":PRS},indent=2))
+          
+          PY
+          python /tmp/repair.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-existing-pr-repairs
+          path: repair-evidence/
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: verified-existing-pr-repairs
+          path: evidence
+      - name: Publish only tested fast-forward updates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, pathlib, subprocess, os, base64
+          evidence=pathlib.Path('evidence').resolve()
+          plan=json.loads((evidence/'manifest.json').read_text())
+          upstream='https://github.com/shivamnegi92/practical-ai-systems.git'
+          fork='https://github.com/ANO3457/practical-ai-systems.git'
+          def out(args,cwd=None): return subprocess.check_output(args,cwd=cwd,text=True).strip()
+          def run(args,cwd=None): subprocess.run(args,cwd=cwd,check=True)
+          assert out(['git','ls-remote',upstream,'refs/heads/main']).split()[0]==plan['base']
+          for pr in plan['prs']:
+              folder=pathlib.Path('/tmp')/('publish-'+str(pr['n']))
+              folder.mkdir()
+              run(['git','init','-q'],folder)
+              run(['git','fetch',str(evidence/(str(pr['n'])+'.bundle')),'HEAD'],folder)
+              assert out(['git','rev-parse','FETCH_HEAD'],folder)==pr['candidate']
+              parents=out(['git','rev-list','--parents','-n','1',pr['candidate']],folder).split()
+              assert parents[1:]==[pr['head'],plan['base']]
+              remote=out(['git','ls-remote',fork,'refs/heads/'+pr['branch']],folder).split()[0]
+              assert remote==pr['head'],(pr['n'],'remote changed')
+              secret=base64.b64encode(('x-access-token:'+os.environ['GH_TOKEN']).encode()).decode()
+              run(['git','-c','http.https://github.com/.extraheader=AUTHORIZATION: basic '+secret,'push',fork,pr['candidate']+':refs/heads/'+pr['branch']],folder)
+              assert out(['git','ls-remote',fork,'refs/heads/'+pr['branch']],folder).split()[0]==pr['candidate']
+              print('Published PR',pr['n'],pr['candidate'])
+          PY
