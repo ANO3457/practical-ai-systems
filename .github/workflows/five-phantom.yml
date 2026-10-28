@@ -1,77 +1,96 @@
-name: Validate startup command recognition
+name: Validate module entry point
 on:
   push:
     paths: [.github/workflows/five-phantom.yml]
 permissions:
   contents: read
 jobs:
-  verify:
+  linux:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: batrapulkit/squidbrake
-          ref: b6ebf8637a0d256f220abdcb8c13dc7ccc5e63b8
+          repository: hayagrivai-labs/phantom
+          ref: f662e62a1cd3a43de4824198a264568df23ca316
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install -r requirements.txt pytest
-      - name: Regression before source change
+      - run: python -m pip install -e '.[dev]'
+      - name: Install test-only candidate
         run: |
           python - <<'PY'
-          import base64,json
           from pathlib import Path
-          patch=json.loads(base64.b64decode("eyJoZWxwZXIiOiJkZWYgX3N0YXJ0c19hdXRvbWF0aWNhbGx5KHByb2c6IHN0ciwgbG93ZXI6IGxpc3Rbc3RyXSkgLT4gc3RyIHwgTm9uZTpcbiAgICBcIlwiXCJDaGFuZ2VzIHRoYXQgc2NoZWR1bGUgd29yayBhZnRlciB0aGlzIGNvbW1hbmQgaGFzIGZpbmlzaGVkLlwiXCJcIlxuICAgIGlmIHByb2cgPT0gXCJzY2h0YXNrc1wiOlxuICAgICAgICBhY3Rpb24gPSBuZXh0KCh3IGZvciB3IGluIGxvd2VyWzE6XSBpZiB3IGluXG4gICAgICAgICAgICAgICAgICAgICAgIChcIi9jcmVhdGVcIiwgXCIvcXVlcnlcIiwgXCIvY2hhbmdlXCIsIFwiL2RlbGV0ZVwiLCBcIi9ydW5cIiwgXCIvZW5kXCIsIFwiL3Nob3dzaWRcIikpLCBOb25lKVxuICAgICAgICBpZiBhY3Rpb24gPT0gXCIvY3JlYXRlXCI6XG4gICAgICAgICAgICByZXR1cm4gXCJjcmVhdGVzIGEgc2NoZWR1bGVkIHRhc2sgdGhhdCBjYW4gcnVuIGFmdGVyIHRoaXMgc2Vzc2lvbiAoc2NodGFza3MgL2NyZWF0ZSlcIlxuICAgIGlmIHByb2cgPT0gXCJyZWdpc3Rlci1zY2hlZHVsZWR0YXNrXCI6XG4gICAgICAgIHJldHVybiBcInJlZ2lzdGVycyBhIHRhc2sgdGhhdCBjYW4gcnVuIGFmdGVyIHRoaXMgc2Vzc2lvbiAoUmVnaXN0ZXItU2NoZWR1bGVkVGFzaylcIlxuICAgIGlmIChwcm9nID09IFwicmVnXCIgYW5kIGxvd2VyWzE6Ml0gPT0gW1wiYWRkXCJdKSBvciBwcm9nIGluIChcIm5ldy1pdGVtcHJvcGVydHlcIiwgXCJzZXQtaXRlbXByb3BlcnR5XCIpOlxuICAgICAgICBpZiBhbnkocmUuc2VhcmNoKHJcIig/Ol58XFxcXCljdXJyZW50dmVyc2lvblxcXFxydW4oPzpvbmNlKT8kXCIsIHcucnN0cmlwKFwiXFxcXFwiKSkgZm9yIHcgaW4gbG93ZXJbMTpdKTpcbiAgICAgICAgICAgIHJldHVybiBcImFkZHMgYSBXaW5kb3dzIFJ1biBrZXkgdmFsdWUgdGhhdCBzdGFydHMgYSBwcm9ncmFtIGF0IGxvZ2luXCJcbiAgICBpZiBwcm9nID09IFwic3lzdGVtY3RsXCI6XG4gICAgICAgIGFyZ3MgPSBpdGVyKGxvd2VyWzE6XSlcbiAgICAgICAgZm9yIHdvcmQgaW4gYXJnczpcbiAgICAgICAgICAgIGlmIHdvcmQgaW4gKFwiLWhcIiwgXCItLWhvc3RcIiwgXCItbVwiLCBcIi0tbWFjaGluZVwiLCBcIi0tcm9vdFwiLCBcIi0taW1hZ2VcIik6XG4gICAgICAgICAgICAgICAgbmV4dChhcmdzLCBOb25lKVxuICAgICAgICAgICAgICAgIGNvbnRpbnVlXG4gICAgICAgICAgICBpZiB3b3JkLnN0YXJ0c3dpdGgoXCItXCIpOlxuICAgICAgICAgICAgICAgIGNvbnRpbnVlXG4gICAgICAgICAgICBpZiB3b3JkID09IFwiZW5hYmxlXCI6XG4gICAgICAgICAgICAgICAgcmV0dXJuIFwiZW5hYmxlcyBhIHNlcnZpY2UgdG8gc3RhcnQgYXV0b21hdGljYWxseSAoc3lzdGVtY3RsIGVuYWJsZSlcIlxuICAgICAgICAgICAgYnJlYWtcbiAgICBpZiBwcm9nID09IFwibGF1bmNoY3RsXCIgYW5kIGxvd2VyWzE6Ml0gPT0gW1wibG9hZFwiXTpcbiAgICAgICAgcmV0dXJuIFwibG9hZHMgYSBsYXVuY2ggYWdlbnQgb3IgZGFlbW9uIHRoYXQgY2FuIHJ1biBhZnRlciB0aGlzIHNlc3Npb24gKGxhdW5jaGN0bCBsb2FkKVwiXG4gICAgaWYgcHJvZyA9PSBcImNyb250YWJcIiBhbmQgXCItbFwiIG5vdCBpbiBsb3dlciBhbmQgXCItclwiIG5vdCBpbiBsb3dlcjpcbiAgICAgICAgaWYgXCItZVwiIGluIGxvd2VyIG9yIFwiLVwiIGluIGxvd2VyWzE6XSBvciBfcG9zaXRpb25hbChsb3dlcik6XG4gICAgICAgICAgICByZXR1cm4gXCJpbnN0YWxscyBvciBlZGl0cyBzY2hlZHVsZWQgY29tbWFuZHMgdGhhdCB3aWxsIHJ1biBsYXRlciAoY3JvbnRhYilcIlxuICAgIHJldHVybiBOb25lXG5cblxuIiwidGVzdHMiOiJcblxuIyBUaGVzZSBhcmUgaW5lcnQgY29tbWFuZC1yZWFkZXIgaW5wdXRzLiBObyB0YXNrLCByZWdpc3RyeSBjaGFuZ2Ugb3Igc2VydmljZSBpcyBleGVjdXRlZC5cbkBweXRlc3QubWFyay5wYXJhbWV0cml6ZShcImxpbmVcIiwgW1xuICAgIHJcInNjaHRhc2tzIC9jcmVhdGUgL3NjIG9ubG9nb24gL3RuIHVwZGF0ZXIgL3RyIEM6XFxVc2Vyc1xcbWVcXHguZXhlXCIsXG4gICAgclwiU0NIVEFTS1MuRVhFIC9DcmVhdGUgL1NDIERBSUxZIC9UTiBleGFtcGxlIC9UUiBDOlxcZXhhbXBsZS5leGVcIixcbiAgICBcIlJlZ2lzdGVyLVNjaGVkdWxlZFRhc2sgLVRhc2tOYW1lIHVwZGF0ZXIgLUFjdGlvbiAkYSAtVHJpZ2dlciAkdFwiLFxuICAgIHJcInJlZyBhZGQgSEtDVVxcU29mdHdhcmVcXE1pY3Jvc29mdFxcV2luZG93c1xcQ3VycmVudFZlcnNpb25cXFJ1biAvdiB1cGRhdGVyIC9kIHguZXhlXCIsXG4gICAgcidyZWcgYWRkIFwiSEtMTVxcU29mdHdhcmVcXE1pY3Jvc29mdFxcV2luZG93c1xcQ3VycmVudFZlcnNpb25cXFJ1bk9uY2VcIiAvdiB0ZXN0IC9kIHguZXhlJyxcbiAgICByXCJOZXctSXRlbVByb3BlcnR5IC1QYXRoIEhLQ1U6XFxTb2Z0d2FyZVxcTWljcm9zb2Z0XFxXaW5kb3dzXFxDdXJyZW50VmVyc2lvblxcUnVuIC1OYW1lIHVwZGF0ZXIgLVZhbHVlIHguZXhlXCIsXG4gICAgcidTZXQtSXRlbVByb3BlcnR5IC1MaXRlcmFsUGF0aCBcIkhLQ1U6XFxTb2Z0d2FyZVxcTWljcm9zb2Z0XFxXaW5kb3dzXFxDdXJyZW50VmVyc2lvblxcUnVuXCIgLU5hbWUgdXBkYXRlciAtVmFsdWUgeC5leGUnLFxuICAgIFwic3lzdGVtY3RsIGVuYWJsZSAtLW5vdyBleGFtcGxlLnNlcnZpY2VcIixcbiAgICBcInN1ZG8gc3lzdGVtY3RsIC0tdXNlciBlbmFibGUgZXhhbXBsZS5zZXJ2aWNlXCIsXG4gICAgXCJzeXN0ZW1jdGwgLS1ob3N0IGV4YW1wbGUuaW52YWxpZCBlbmFibGUgZXhhbXBsZS5zZXJ2aWNlXCIsXG4gICAgXCJsYXVuY2hjdGwgbG9hZCAtdyB+L0xpYnJhcnkvTGF1bmNoQWdlbnRzL2NvbS5leGFtcGxlLnBsaXN0XCIsXG4gICAgXCJjcm9udGFiIC1cIixcbiAgICBcImNyb250YWIgc2NoZWR1bGUudHh0XCIsXG4gICAgXCJjcm9udGFiIC1lXCIsXG4gICAgJyhjcm9udGFiIC1sOyBlY2hvIFwiQHJlYm9vdCBlY2hvIGV4YW1wbGVcIikgfCBjcm9udGFiIC0nLFxuXSlcbmRlZiB0ZXN0X3N0YXJ0dXBfY2hhbmdlc193YWl0X2Zvcl9hX3BlcnNvbihsaW5lKTpcbiAgICByZWFkaW5nID0gY29tbWFuZHMucmVhZChsaW5lKVxuICAgIGFzc2VydCByZWFkaW5nLmtpbmQgPT0gXCJpcnJldmVyc2libGVcIiwgcmVhZGluZy5zdW1tYXJ5KClcbiAgICBhc3NlcnQgcmVhZGluZy5zdW1tYXJ5KClcblxuXG5AcHl0ZXN0Lm1hcmsucGFyYW1ldHJpemUoXCJsaW5lXCIsIFtcbiAgICBcInNjaHRhc2tzIC9xdWVyeVwiLFxuICAgIFwic2NodGFza3MgL3F1ZXJ5IC90biBlbmFibGVcIixcbiAgICBcInN5c3RlbWN0bCBzdGF0dXMgbmdpbnhcIixcbiAgICBcInN5c3RlbWN0bCBzdGF0dXMgZW5hYmxlXCIsXG4gICAgXCJzeXN0ZW1jdGwgLS11c2VyIHN0YXR1cyBuZ2lueFwiLFxuICAgIFwibGF1bmNoY3RsIGxpc3RcIixcbiAgICBcImxhdW5jaGN0bCBwcmludCBzeXN0ZW0vY29tLmV4YW1wbGVcIixcbiAgICBcImNyb250YWIgLWxcIixcbiAgICBcImNyb250YWIgLXUgcm9vdCAtbFwiLFxuICAgIFwiR2V0LVNjaGVkdWxlZFRhc2tcIixcbiAgICByXCJyZWcgcXVlcnkgSEtDVVxcU29mdHdhcmVcXE1pY3Jvc29mdFxcV2luZG93c1xcQ3VycmVudFZlcnNpb25cXFJ1blwiLFxuICAgIHJcIkdldC1JdGVtUHJvcGVydHkgLVBhdGggSEtDVTpcXFNvZnR3YXJlXFxNaWNyb3NvZnRcXFdpbmRvd3NcXEN1cnJlbnRWZXJzaW9uXFxSdW5cIixcbiAgICByXCJyZWcgYWRkIEhLQ1VcXFNvZnR3YXJlXFxFeGFtcGxlXFxTZXR0aW5ncyAvdiBtb2RlIC9kIGRlZmF1bHRcIixcbiAgICByXCJOZXctSXRlbVByb3BlcnR5IC1QYXRoIEhLQ1U6XFxTb2Z0d2FyZVxcRXhhbXBsZVxcUnVuSGlzdG9yeSAtTmFtZSB0ZXN0IC1WYWx1ZSBleGFtcGxlXCIsXG4gICAgXCJlY2hvIHN5c3RlbWN0bCBlbmFibGUgZXhhbXBsZS5zZXJ2aWNlXCIsXG5dKVxuZGVmIHRlc3Rfc3RhcnR1cF9xdWVyaWVzX2FuZF9sb29rYWxpa2VzX2FyZV9ub3RfcGVyc2lzdGVuY2VfY2hhbmdlcyhsaW5lKTpcbiAgICByZWFkaW5nID0gY29tbWFuZHMucmVhZChsaW5lKVxuICAgIGFzc2VydCByZWFkaW5nLmtpbmQgaW4gKFwicmVhZF9vbmx5XCIsIFwib3RoZXJcIiksIHJlYWRpbmcuc3VtbWFyeSgpXG4ifQ=="))
-          p=Path("tests/test_commands.py")
-          p.write_text(p.read_text()+patch["tests"])
-          Path("/tmp/startup-patch.json").write_text(json.dumps(patch))
+          import base64
+          Path("tests/test_main_module.py").write_text(base64.b64decode("IiIiRXhlcmNpc2UgdGhlIGluc3RhbGxlZCBtb2R1bGUgZW50cnkgcG9pbnQgd2l0aCByZWFsIHN1YnByb2Nlc3NlcyBhbmQgQ0xJIGRpc3BhdGNoLiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKaW1wb3J0IHJ1bnB5CmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBzeXMKZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgppbXBvcnQgcHl0ZXN0Cgpmcm9tIHBoYW50b20gaW1wb3J0IF9fdmVyc2lvbl9fCgpGSVhUVVJFID0gUGF0aChfX2ZpbGVfXykucGFyZW50IC8gImZpeHR1cmVzIiAvICJ2YWxpZF9wbGFpbi5weSIKCgpkZWYgX21vZHVsZSgqYXJnczogc3RyLCBjd2Q6IFBhdGgpIC0+IHN1YnByb2Nlc3MuQ29tcGxldGVkUHJvY2Vzc1tzdHJdOgogICAgcmV0dXJuIHN1YnByb2Nlc3MucnVuKAogICAgICAgIFtzeXMuZXhlY3V0YWJsZSwgIi1tIiwgInBoYW50b20iLCAqYXJnc10sCiAgICAgICAgY3dkPWN3ZCwKICAgICAgICBjYXB0dXJlX291dHB1dD1UcnVlLAogICAgICAgIHRleHQ9VHJ1ZSwKICAgICAgICB0aW1lb3V0PTE1LAogICAgICAgIGNoZWNrPUZhbHNlLAogICAgKQoKCmRlZiB0ZXN0X21vZHVsZV92ZXJzaW9uX2Zyb21fYW5vdGhlcl93b3JraW5nX2RpcmVjdG9yeSh0bXBfcGF0aDogUGF0aCkgLT4gTm9uZToKICAgIHJlc3VsdCA9IF9tb2R1bGUoIi0tdmVyc2lvbiIsIGN3ZD10bXBfcGF0aCkKICAgIGFzc2VydCByZXN1bHQucmV0dXJuY29kZSA9PSAwCiAgICBhc3NlcnQgcmVzdWx0LnN0ZG91dC5zdHJpcCgpID09IGYicGhhbnRvbSB7X192ZXJzaW9uX199IgogICAgYXNzZXJ0IG5vdCByZXN1bHQuc3RkZXJyCgoKZGVmIHRlc3RfbW9kdWxlX2NoZWNrc19hX3BsYWluX3B5dGhvbl9maWxlKHRtcF9wYXRoOiBQYXRoKSAtPiBOb25lOgogICAgcmVzdWx0ID0gX21vZHVsZSgiY2hlY2siLCBzdHIoRklYVFVSRS5yZXNvbHZlKCkpLCBjd2Q9dG1wX3BhdGgpCiAgICBhc3NlcnQgcmVzdWx0LnJldHVybmNvZGUgPT0gMAogICAgYXNzZXJ0ICJUcmFjZWJhY2siIG5vdCBpbiByZXN1bHQuc3Rkb3V0ICsgcmVzdWx0LnN0ZGVycgoKCmRlZiB0ZXN0X21vZHVsZV9taXNzaW5nX2ZpbGVfcmV0dXJuc19jbGlfZXJyb3Jfd2l0aG91dF90cmFjZWJhY2sodG1wX3BhdGg6IFBhdGgpIC0+IE5vbmU6CiAgICBtaXNzaW5nID0gdG1wX3BhdGggLyAibWlzc2luZy5weSIKICAgIHJlc3VsdCA9IF9tb2R1bGUoImNoZWNrIiwgc3RyKG1pc3NpbmcpLCBjd2Q9dG1wX3BhdGgpCiAgICBhc3NlcnQgcmVzdWx0LnJldHVybmNvZGUgPT0gMQogICAgYXNzZXJ0IG1pc3NpbmcubmFtZSBpbiByZXN1bHQuc3Rkb3V0ICsgcmVzdWx0LnN0ZGVycgogICAgYXNzZXJ0ICJUcmFjZWJhY2siIG5vdCBpbiByZXN1bHQuc3Rkb3V0ICsgcmVzdWx0LnN0ZGVycgoKCkBweXRlc3QubWFyay5wYXJhbWV0cml6ZSgibWlzc2luZyIsIFtGYWxzZSwgVHJ1ZV0pCmRlZiB0ZXN0X21vZHVsZV9kaXNwYXRjaF9rZWVwc190aGVfY2xpX2V4aXRfY29kZShtb25rZXlwYXRjaCwgdG1wX3BhdGgsIG1pc3NpbmcpIC0+IE5vbmU6CiAgICAjIFJ1biB0aGUgcmVhbCBtb2R1bGUgaW4gdGhpcyBwcm9jZXNzIHRvbywgc28gY292ZXJhZ2UgcmVjb3JkcyBfX21haW5fXy5weS4KICAgIHBhdGggPSB0bXBfcGF0aCAvICJtaXNzaW5nLnB5IiBpZiBtaXNzaW5nIGVsc2UgRklYVFVSRS5yZXNvbHZlKCkKICAgIG1vbmtleXBhdGNoLnNldGF0dHIoc3lzLCAiYXJndiIsIFsicGhhbnRvbSIsICJjaGVjayIsIHN0cihwYXRoKV0pCiAgICB3aXRoIHB5dGVzdC5yYWlzZXMoU3lzdGVtRXhpdCkgYXMgcmVzdWx0OgogICAgICAgIHJ1bnB5LnJ1bl9tb2R1bGUoInBoYW50b20iLCBydW5fbmFtZT0iX19tYWluX18iKQogICAgYXNzZXJ0IHJlc3VsdC52YWx1ZS5jb2RlID09ICgxIGlmIG1pc3NpbmcgZWxzZSAwKQo=").decode(),encoding="utf-8",newline="")
           PY
-          python -m pytest tests/test_commands.py -k startup_ --junitxml=/tmp/squid-red.xml -q || true
-          python - <<'PY'
-          import xml.etree.ElementTree as ET
-          cases=ET.parse("/tmp/squid-red.xml").findall(".//testcase")
-          failures=[c for c in cases if c.find("failure") is not None]
-          print("RED_COUNTS",len(cases),len(failures))
-          assert len(cases)==30 and len(failures)==15,(len(cases),len(failures))
-          assert all("test_startup_changes_wait" in c.attrib["name"] for c in failures)
-          PY
-      - name: Apply narrow source fix
+          ruff check --fix tests/test_main_module.py
+          ruff format tests/test_main_module.py
+      - name: Validate module entry point
         run: |
+          ruff check src tests scripts
+          python -m pytest --cov=phantom --cov-report=json --cov-report=term-missing:skip-covered
           python - <<'PY'
           import json
           from pathlib import Path
-          patch=json.loads(Path("/tmp/startup-patch.json").read_text())
-          p=Path("commands.py")
-          source=p.read_text()
-          assert source.count("def classify(words:")==1
-          source=source.replace("def classify(words:",patch["helper"]+chr(10)+"def classify(words:")
-          anchor='    if prog == "truncate" or prog in ("clear-content", "clc")'
-          assert source.count(anchor)==1
-          insert=chr(10).join(['    if (why := _starts_automatically(prog, lower)):','        cmd.kind, cmd.why = "irreversible", why','        return [cmd], []',''])
-          source=source.replace(anchor,insert+anchor)
-          p.write_text(source)
+          summary=json.loads(Path("coverage.json").read_text())["files"]["src/phantom/__main__.py"]["summary"]
+          assert summary["covered_lines"]==summary["num_statements"],summary
+          print("MODULE_COVERAGE",summary)
           PY
-      - name: Full tests and scenario
-        run: |
-          python -m pytest -q
-          python tests/e2e_business_scenario.py
+          mypy --platform linux
+          mypy --platform win32
+          mypy --platform darwin
+          python scripts/verify_release.py
           git diff --check
-      - name: Exact tested manifest
+      - name: Exact tested hash
         run: |
           python - <<'PY'
-          import hashlib,json
+          import hashlib
           from pathlib import Path
-          paths=["commands.py","tests/test_commands.py"]
-          manifest={p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}
-          Path("tested-manifest.json").write_text(json.dumps(manifest,indent=2))
-          print("TESTED_HASHES",json.dumps(manifest))
+          print("TESTED_HASH",hashlib.sha256(Path("tests/test_main_module.py").read_bytes()).hexdigest())
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: squid-tested-candidate
-          path: |
-            commands.py
-            tests/test_commands.py
-            tested-manifest.json
+          name: module-tested-candidate
+          path: tests/test_main_module.py
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: hayagrivai-labs/phantom
+          ref: f662e62a1cd3a43de4824198a264568df23ca316
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[dev]'
+      - name: Install test-only candidate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          Path("tests/test_main_module.py").write_text(base64.b64decode("IiIiRXhlcmNpc2UgdGhlIGluc3RhbGxlZCBtb2R1bGUgZW50cnkgcG9pbnQgd2l0aCByZWFsIHN1YnByb2Nlc3NlcyBhbmQgQ0xJIGRpc3BhdGNoLiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKaW1wb3J0IHJ1bnB5CmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCBzeXMKZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgppbXBvcnQgcHl0ZXN0Cgpmcm9tIHBoYW50b20gaW1wb3J0IF9fdmVyc2lvbl9fCgpGSVhUVVJFID0gUGF0aChfX2ZpbGVfXykucGFyZW50IC8gImZpeHR1cmVzIiAvICJ2YWxpZF9wbGFpbi5weSIKCgpkZWYgX21vZHVsZSgqYXJnczogc3RyLCBjd2Q6IFBhdGgpIC0+IHN1YnByb2Nlc3MuQ29tcGxldGVkUHJvY2Vzc1tzdHJdOgogICAgcmV0dXJuIHN1YnByb2Nlc3MucnVuKAogICAgICAgIFtzeXMuZXhlY3V0YWJsZSwgIi1tIiwgInBoYW50b20iLCAqYXJnc10sCiAgICAgICAgY3dkPWN3ZCwKICAgICAgICBjYXB0dXJlX291dHB1dD1UcnVlLAogICAgICAgIHRleHQ9VHJ1ZSwKICAgICAgICB0aW1lb3V0PTE1LAogICAgICAgIGNoZWNrPUZhbHNlLAogICAgKQoKCmRlZiB0ZXN0X21vZHVsZV92ZXJzaW9uX2Zyb21fYW5vdGhlcl93b3JraW5nX2RpcmVjdG9yeSh0bXBfcGF0aDogUGF0aCkgLT4gTm9uZToKICAgIHJlc3VsdCA9IF9tb2R1bGUoIi0tdmVyc2lvbiIsIGN3ZD10bXBfcGF0aCkKICAgIGFzc2VydCByZXN1bHQucmV0dXJuY29kZSA9PSAwCiAgICBhc3NlcnQgcmVzdWx0LnN0ZG91dC5zdHJpcCgpID09IGYicGhhbnRvbSB7X192ZXJzaW9uX199IgogICAgYXNzZXJ0IG5vdCByZXN1bHQuc3RkZXJyCgoKZGVmIHRlc3RfbW9kdWxlX2NoZWNrc19hX3BsYWluX3B5dGhvbl9maWxlKHRtcF9wYXRoOiBQYXRoKSAtPiBOb25lOgogICAgcmVzdWx0ID0gX21vZHVsZSgiY2hlY2siLCBzdHIoRklYVFVSRS5yZXNvbHZlKCkpLCBjd2Q9dG1wX3BhdGgpCiAgICBhc3NlcnQgcmVzdWx0LnJldHVybmNvZGUgPT0gMAogICAgYXNzZXJ0ICJUcmFjZWJhY2siIG5vdCBpbiByZXN1bHQuc3Rkb3V0ICsgcmVzdWx0LnN0ZGVycgoKCmRlZiB0ZXN0X21vZHVsZV9taXNzaW5nX2ZpbGVfcmV0dXJuc19jbGlfZXJyb3Jfd2l0aG91dF90cmFjZWJhY2sodG1wX3BhdGg6IFBhdGgpIC0+IE5vbmU6CiAgICBtaXNzaW5nID0gdG1wX3BhdGggLyAibWlzc2luZy5weSIKICAgIHJlc3VsdCA9IF9tb2R1bGUoImNoZWNrIiwgc3RyKG1pc3NpbmcpLCBjd2Q9dG1wX3BhdGgpCiAgICBhc3NlcnQgcmVzdWx0LnJldHVybmNvZGUgPT0gMQogICAgYXNzZXJ0IG1pc3NpbmcubmFtZSBpbiByZXN1bHQuc3Rkb3V0ICsgcmVzdWx0LnN0ZGVycgogICAgYXNzZXJ0ICJUcmFjZWJhY2siIG5vdCBpbiByZXN1bHQuc3Rkb3V0ICsgcmVzdWx0LnN0ZGVycgoKCkBweXRlc3QubWFyay5wYXJhbWV0cml6ZSgibWlzc2luZyIsIFtGYWxzZSwgVHJ1ZV0pCmRlZiB0ZXN0X21vZHVsZV9kaXNwYXRjaF9rZWVwc190aGVfY2xpX2V4aXRfY29kZShtb25rZXlwYXRjaCwgdG1wX3BhdGgsIG1pc3NpbmcpIC0+IE5vbmU6CiAgICAjIFJ1biB0aGUgcmVhbCBtb2R1bGUgaW4gdGhpcyBwcm9jZXNzIHRvbywgc28gY292ZXJhZ2UgcmVjb3JkcyBfX21haW5fXy5weS4KICAgIHBhdGggPSB0bXBfcGF0aCAvICJtaXNzaW5nLnB5IiBpZiBtaXNzaW5nIGVsc2UgRklYVFVSRS5yZXNvbHZlKCkKICAgIG1vbmtleXBhdGNoLnNldGF0dHIoc3lzLCAiYXJndiIsIFsicGhhbnRvbSIsICJjaGVjayIsIHN0cihwYXRoKV0pCiAgICB3aXRoIHB5dGVzdC5yYWlzZXMoU3lzdGVtRXhpdCkgYXMgcmVzdWx0OgogICAgICAgIHJ1bnB5LnJ1bl9tb2R1bGUoInBoYW50b20iLCBydW5fbmFtZT0iX19tYWluX18iKQogICAgYXNzZXJ0IHJlc3VsdC52YWx1ZS5jb2RlID09ICgxIGlmIG1pc3NpbmcgZWxzZSAwKQo=").decode(),encoding="utf-8",newline="")
+          PY
+          ruff check --fix tests/test_main_module.py
+          ruff format tests/test_main_module.py
+      - name: Validate module entry point
+        run: |
+          python -m pytest tests/test_main_module.py -v
+          ruff check tests/test_main_module.py
+          git diff --check
+      - name: Exact tested hash
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          print("TESTED_HASH",hashlib.sha256(Path("tests/test_main_module.py").read_bytes()).hexdigest())
+          PY
