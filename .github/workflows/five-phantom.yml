@@ -32,6 +32,7 @@ jobs:
           cases=ET.parse("/tmp/godot-red.xml").findall(".//testcase")
           active=[c for c in cases if c.find("skipped") is None]
           failures=[c for c in active if c.find("failure") is not None]
+          print([(c.attrib["name"],c.find("failure").text) for c in failures])
           assert len(active)==9 and len(failures)==4,(len(active),len(failures))
           assert all("suggests the Window replacement" in c.attrib["name"] for c in failures)
           print("RED_CONTROL: 4 expected failures, 5 passing controls")
